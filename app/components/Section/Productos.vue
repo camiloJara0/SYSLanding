@@ -72,7 +72,7 @@ onMounted(() => {
     // Entrada de la tarjeta (desde abajo)
     tl.fromTo(card,
       { y: '100%', opacity: 0, rotateZ: 5 },
-      { y: '0%', opacity: 1, rotateZ: 0, duration: 1, ease: 'power2.out' },
+      { y: '0%', opacity: 1, rotateZ: 0, duration: 0.8, ease: 'power2.out' },
       i
     )
 
@@ -87,7 +87,7 @@ onMounted(() => {
 
     // Salida de la tarjeta (hacia arriba como baraja)
     tl.to(card,
-      { y: '-100%', opacity: 0, rotateZ: -3, duration: 1, ease: 'power2.in' },
+      { y: '-100%', opacity: 0, rotateZ: -3, duration: 0.6, ease: 'power2.in' },
       i + 0.8
     )
   })

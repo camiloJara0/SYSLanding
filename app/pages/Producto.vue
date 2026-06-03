@@ -10,9 +10,10 @@ const { llamaDatos, borrarFiltros, ordenar } = store
 
 const imagenPrincipal = ref('/images/hospital.jpg')
 const cantidad = ref(1)
+const router = useRouter()
 
 function volver() {
-    navigateTo('/#section-catalogo')
+    router.push('/#section-catalogo')
     store.productoSeleccionado = {}
 }
 
@@ -69,7 +70,7 @@ onMounted(async() => {
 <template>
     <Navbar />
 
-    <UContainer class="py-8">
+    <UContainer class="py-8 pt-18">
         <!-- Breadcrumb -->
         <div class="mb-8 text-sm text-gray-600">
             <NuxtLink to="/" class="hover:text-blue-600 transition-colors">Home</NuxtLink>
@@ -225,35 +226,60 @@ onMounted(async() => {
 
             <!-- Grid de recomendaciones -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div v-for="(item, idx) in productosRecomendados" :key="idx" class="recomendacion-card group">
+                <div class="relative cursor-pointer group font-[Outfit] rounded-2xl" v-for="(item, i) in productosRecomendados" :key="i">
                     <div
-                        class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
-
-                        <!-- Imagen container -->
-                        <div class="relative bg-linear-to-br from-gray-50 to-gray-100 aspect-square overflow-hidden">
-                            <img src="/images/equipos.jpg" :alt="item.EQUIPO"
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-                        </div>
-
-                        <!-- Contenido -->
-                        <div class="p-4 flex flex-col flex-1">
-                            <h3 class="text-base! font-bold text-gray-900 line-clamp-2 mb-2">
-                                {{ item.EQUIPO.length > 35 ? item.EQUIPO.substring(0, 35) + '...' : item.EQUIPO }}
-                            </h3>
-
-                            <p class="text-2xl font-bold text-gray-900 mb-3">
-                                ${{ item.V_UNITARIO.toLocaleString("es-CO") }}
-                            </p>
-
-                            <button @click="() => { productoSeleccionado = item; $router.push('/Producto') }"
-                                class="mt-auto px-4 py-2 rounded-lg font-semibold transition-all duration-200" :style="{
-                                    backgroundColor: '#3B82F6',
-                                    color: 'white'
-                                }">
-                                Ver detalles
-                            </button>
-                        </div>
+                        class="absolute -left-3.5 top-0 bottom-auto w-10.5 z-10 flex items-center justify-center pointer-events-none rounded-2xl">
+                        <span class="text-[#1565C0] font-black uppercase leading-none select-none opacity-10"
+                            style="writingMode: vertical-rl; textOrientation: mixed; transform: rotate(180deg); fontSize: 38px; letterSpacing: -0.02em; whiteSpace: nowrap;">
+                            {{ item.CATEGORIA.split(' ')[0] }}
+                        </span>
                     </div>
+                    <nuxt-link to="/Producto" 
+                        @click="productoSeleccionado = item"
+                        class="md:h-[45vh] h-[30vh] group w-70 rounded-[20px] overflow-hidden bg-white shadow-[0_4px_24px_rgba(10,60,120,0.13)] hover:shadow-[0_16px_48px_rgba(10,60,120,0.22)] hover:-translate-y-1.5 transition-all duration-300 cursor-pointer">
+    
+                        <!-- Escena IMG producto (cada uno con su propio IMG) -->
+                        <div class="relative w-full h-47.5 overflow-hidden bg-blue-100">
+                            <img src="/images/equipos.jpg" alt="Equipo BIPAP"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-400 rounded-t-2xl" />
+                            <span
+                                class="absolute top-3 left-3 bg-white/90 text-blue-700 text-[11px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-blue-200">
+                                Disponible
+                            </span>
+                        </div>
+                        <div class="relative px-5.5 pt-5 pb-5.5 rounded-b-2xl"
+                            style="background: linear-gradient(160deg, #1565C0 0%, #1E88E5 60%, #29B6F6 100%)">
+                            <div class="absolute top-0 left-0 right-0 h-0.75"
+                                style="background: linear-gradient(90deg, rgba(255,255,255,0.13), rgba(255,255,255,0.4), rgba(255,255,255,0.13))" />
+                            <p class="text-xs! font-semibold uppercase tracking-[0.06em] text-white/65 mb-0.5">
+                                Equipo médico
+                            </p>
+                            <h2 class="text-lg! font-bold text-white tracking-tight mb-3.5">
+                                {{ item.EQUIPO.length > 25 ? item.EQUIPO.substring(0, 25) + '...' : item.EQUIPO }}
+                            </h2>
+                            <div class="h-px bg-white/20 mb-4" />
+    
+                            <div class="flex items-end gap-1.5 mb-4.5">
+                                <span class="text-base font-semibold text-white/75 mb-0.5">$</span>
+                                <div>
+                                    <span class="text-lg! font-bold text-white leading-none">{{
+                                        item.V_UNITARIO.toLocaleString("es-CO") }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="px-4 pt-2">
+                            <h3 class="md:text-lg! text-base! text-white!">
+                                {{ item.EQUIPO.length > 25 ? item.EQUIPO.substring(0, 25) + '...' : item.EQUIPO }}
+                            </h3>
+                            <p class="eq-desc text-white">${{ item.V_UNITARIO.toLocaleString("es-CO") }}</p>
+    
+                            <div class="eq-footer">
+                                <UButton to="/Producto" color="neutral" variant="soft" size="xs"
+                                    @click="productoSeleccionado = item">Ver más</UButton>
+                            </div>
+    
+                        </div> -->
+                    </nuxt-link>
                 </div>
             </div>
         </div>

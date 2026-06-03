@@ -64,7 +64,34 @@ const servicios = [
     }
 ]
 
+const calculateCarouselHeight = () => {
+    const track = document.querySelector('.cards-track')
+    if (!track) return
+
+    // Calcula el desplazamiento total necesario
+    const maxSlide = track.scrollWidth - track.parentElement.offsetWidth
+    
+    // La altura del wrapper debe ser: altura visible (100vh) + distancia a recorrer
+    // Esto asegura que hay suficiente scroll para desplazar todo el track
+    const wrapperHeight = (maxSlide / window.innerHeight) * 100
+    const wrapper = document.querySelector('.carrusel-wrapper')
+    wrapper.style.height = `calc(${wrapperHeight}vh + 100vh)`
+}
+
 onMounted(() => {
+    // Calcula la altura inicial
+    setTimeout(() => calculateCarouselHeight(), 100)
+
+    // Recalcula cuando cambia el tamaño de la pantalla
+    window.addEventListener('resize', calculateCarouselHeight)
+
+    // cambio de orientación (móvil, pantallas externas)
+    window.addEventListener('orientationchange', calculateCarouselHeight)
+
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) calculateCarouselHeight()
+    })
+
     // ─── Carrusel horizontal con scroll ───────────────────────────────────────
     const track = document.querySelector('.cards-track')
     const progressFill = document.querySelector('.progress-fill')
@@ -106,6 +133,10 @@ onMounted(() => {
     })
 })
 
+onUnmounted(() => {
+    window.removeEventListener('resize', calculateCarouselHeight)
+})
+
 </script>
 
 <template>
@@ -135,10 +166,9 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* El wrapper debe ser más alto que la pantalla para dar "espacio" al scroll */
+/* El wrapper se calcula dinámicamente en onMounted */
 .carrusel-wrapper {
-    height: 400vh;
-    /* ajusta según cuántas tarjetas tengas */
+    width: 100%;
 }
 
 .carrusel-sticky {
@@ -149,6 +179,7 @@ onMounted(() => {
     align-items: center;
     overflow: hidden;
     background: #F5F5F5;
+    z-index: 10;
 }
 
 .carrusel-overflow {
