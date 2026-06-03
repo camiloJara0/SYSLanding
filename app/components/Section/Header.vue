@@ -42,7 +42,7 @@ onMounted(() => {
     ease: "power3.out" // curva de aceleración suave
   });
 
-// Animación inicial del nombre de la empresa
+  // Animación inicial del nombre de la empresa
   gsap.from(".informacion-inicial h3", {
     y: -80,
     opacity: 0,
@@ -80,14 +80,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-      <header class="h-[220dvh] relative">
+  <header class="h-[220dvh] relative overflow-hidden">
     <div class="fixed inset-0">
       <img class="imagenAnimada" :src="`/images/rural/ezgif-frame-${String(imagenActual).padStart(3, '0')}.jpg`"
         alt="Animación scroll" />
-        <!-- <img class="imagenAnimada" src="/images/Captura de pantalla 2026-04-30 114718.png" >
-        <img class="imagenAnimada" src="/images/Captura de pantalla 2026-04-30 114627.png" >
-        <img class="imagenAnimada" src="/images/Captura de pantalla 2026-04-30 114652.png" > -->
-        <!-- <img class="imagenAnimada" src="/images/Captura de pantalla 2026-04-30 114701.png" > -->
+      <!-- <div class="absolute inset-0 bg-black/30"></div> -->
     </div>
 
     <!-- Bloque inicial -->
@@ -96,13 +93,15 @@ onUnmounted(() => {
         <div class="informacion-inicial md:col-span-5 col-span-6 col-start-1 md:row-start-4 row-start-3 row-span-3">
           <h3 class="md:text-5xl! text-2xl">SYS S.A.S</h3>
           <p class="md:text-xl! text-gray-950">
-            <strong>servicios de ambulancia</strong> para emergencias y traslados, 
+            <strong>servicios de ambulancia</strong> para emergencias y traslados,
             <strong>venta de equipos e insumos médicos</strong> certificados.
           </p>
         </div>
-        <div class="informacion-inicial md:col-span-2 col-span-4 md:col-start-11 col-start-9 row-start-4 row-span-2 p-1">
+        <div
+          class="informacion-inicial md:col-span-2 col-span-4 md:col-start-11 col-start-9 row-start-4 row-span-2 p-1">
           <h4 class="md:text-3xl! text-xl text-gray-900">Tu salud, nuestra prioridad</h4>
-          <UButton to="#section-servicios" color="secondary" variant="solid" size="xl" class="mt-2">Ver Servicios</UButton>
+          <UButton to="#section-servicios" color="secondary" variant="solid" size="xl" class="mt-2">Ver Servicios
+          </UButton>
         </div>
       </div>
     </UContainer>
@@ -119,6 +118,7 @@ onUnmounted(() => {
         </div>
       </div>
     </UContainer>
+    <div class="absolute bottom-0 left-0 w-full h-50 bg-linear-to-b from-transparent to-[#F5F5F5]"></div>
   </header>
 </template>
 

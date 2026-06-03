@@ -9,5 +9,7 @@
   
   <SectionCatalogo id="section-catalogo" />
 
+  <SectionSobreNosotros id="section-sobre-nosotros" />
+  
   <Footer />
 </template>

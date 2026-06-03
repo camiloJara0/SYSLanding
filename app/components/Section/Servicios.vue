@@ -124,9 +124,6 @@ onMounted(() => {
                             <h3>{{ s.titulo }}</h3>
                             <p>{{ s.descripcion }}</p>
                             <img :src="s.imagen" :alt="s.alt">
-                            <UButton to="#" color="neutral" variant="outline" size="xl" class="m-5" :icon="s.icon">
-                                Ver más
-                            </UButton>
                         </div>
                     </div>
                 </div>
