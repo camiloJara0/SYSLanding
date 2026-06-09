@@ -63,7 +63,7 @@ onMounted(() => {
   gsap.from(".ambulancia", {
     y: 100,
     opacity: 0,
-    duration: 1.5,
+    duration: 1,
     ease: "power1.out",
     scrollTrigger: {
       trigger: ".ambulancia",
@@ -82,25 +82,25 @@ onUnmounted(() => {
 <template>
   <header class="h-[220dvh] relative overflow-hidden">
     <div class="fixed inset-0">
-      <img class="imagenAnimada" :src="`/images/rural/ezgif-frame-${String(imagenActual).padStart(3, '0')}.jpg`"
+      <img class="imagenAnimada md:object-center object-[30%_center]" :src="`/images/rural/ezgif-frame-${String(imagenActual).padStart(3, '0')}.jpg`"
         alt="Animación scroll" />
-      <!-- <div class="absolute inset-0 bg-black/30"></div> -->
+      <div class="absolute inset-0 bg-black/10"></div>
     </div>
 
     <!-- Bloque inicial -->
     <UContainer class="h-screen">
       <div class="grid grid-cols-12 grid-rows-12 contenido">
-        <div class="informacion-inicial md:col-span-5 col-span-6 col-start-1 md:row-start-4 row-start-3 row-span-3">
-          <h3 class="md:text-5xl! text-2xl">SYS S.A.S</h3>
-          <p class="md:text-xl! text-gray-950">
-            <strong>servicios de ambulancia</strong> para emergencias y traslados,
-            <strong>venta de equipos e insumos médicos</strong> certificados.
+        <div class="informacion-inicial md:col-span-5 col-span-10 md:col-start-1 col-start-2 md:row-start-3 row-start-4 row-span-3 bg-white/15 md:bg-white/20 rounded-2xl backdrop-blur-xl border border-white/30 shadow-lg md:p-8 md:py-12 p-5 hover:bg-white/25 transition-all duration-300">
+          <h3 class="md:text-3xl! text-2xl font-bold text-gray-700 drop-shadow-lg">SYS S.A.S</h3>
+          <p class="md:text-lg text-base text-gray-700/95 mt-3 md:mt-4 leading-relaxed drop-shadow font-medium">
+            <strong class="text-black">Servicios de ambulancia</strong> para emergencias y traslados,
+            <strong class="text-black">venta de equipos e insumos médicos</strong> certificados.
           </p>
         </div>
         <div
-          class="informacion-inicial md:col-span-2 col-span-4 md:col-start-11 col-start-9 row-start-4 row-span-2 p-1">
-          <h4 class="md:text-3xl! text-xl text-gray-900">Tu salud, nuestra prioridad</h4>
-          <UButton to="#section-servicios" color="secondary" variant="solid" size="xl" class="mt-2">Ver Servicios
+          class="informacion-inicial md:col-span-4 col-span-10 md:col-start-9 col-start-2 md:row-start-4 row-start-8 row-span-3 bg-white/15 md:bg-white/20 rounded-2xl backdrop-blur-xl border border-white/30 shadow-lg md:p-8 md:py-10 p-5 hover:bg-white/25 transition-all duration-300">
+          <h4 class="md:text-3xl text-2xl font-bold text-black drop-shadow-lg">Tu salud, nuestra prioridad</h4>
+          <UButton to="#section-servicios" color="secondary" variant="solid" size="xl" icon="i-lucide-stethoscope" class="mt-4 md:mt-6 text-white font-semibold shadow-md hover:shadow-lg transition-shadow">Ver Servicios
           </UButton>
         </div>
       </div>
@@ -109,16 +109,16 @@ onUnmounted(() => {
     <!-- Bloque ambulancia -->
     <UContainer class="h-screen">
       <div class="grid grid-cols-12 grid-rows-12 contendio">
-        <div class="ambulancia md:col-span-5 col-span-6 md:col-start-7 col-start-6 row-start-7 row-span-4">
-          <h3 class="md:text-4xl! text-3xl">Servicio de Ambulancia</h3>
-          <p class="md:text-xl! text-gray-950">
+        <div class="ambulancia md:col-span-6 col-span-10 md:col-start-7 col-start-2 row-start-4 row-span-4 bg-white/15 md:bg-white/20 rounded-2xl backdrop-blur-xl border border-white/30 shadow-lg md:p-8 md:py-10 p-5 hover:bg-white/25 transition-all duration-300">
+          <h3 class="md:text-4xl text-2xl font-bold py-2 md:py-3 text-white drop-shadow-lg flex items-center gap-3">Servicio de Ambulancia <UIcon name="i-lucide-car"></UIcon></h3>
+          <p class="md:text-lg text-base text-gray-800/95 mt-3 md:mt-4 leading-relaxed font-medium drop-shadow">
             Atención rápida y segura, con personal capacitado y unidades modernas para emergencias y traslados.
           </p>
-          <UButton to="#" color="secondary" variant="solid" size="xl">Contactar</UButton>
+          <UButton to="#" color="secondary" variant="solid" size="xl" icon="i-lucide-phone" class="mt-4 md:mt-6 text-white font-semibold shadow-md hover:shadow-lg transition-shadow">Contactar</UButton>
         </div>
       </div>
     </UContainer>
-    <div class="absolute bottom-0 left-0 w-full h-50 bg-linear-to-b from-transparent to-[#F5F5F5]"></div>
+    <div class="absolute bottom-0 left-0 w-full h-50 bg-linear-to-b from-transparent to-(--bg-color)"></div>
   </header>
 </template>
 

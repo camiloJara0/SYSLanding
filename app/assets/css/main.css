@@ -6,7 +6,7 @@
   --ui-secondary: #1E3A8A;
   --font-primary: 'Space Grotesk', sans-serif;
   --font-secondary: 'Montserrat', sans-serif;
-  --bg-color: #F5F5F5;
+  --bg-color: #dae5f2;
   --card-gradient: linear-gradient( 135deg, #f0f1f4 0%, #c6cfe9 50%, #a8b7e2 100%);
   --deep-blue: #1E3A8A;
   --light-blue: #3B82F6;
@@ -58,4 +58,10 @@ p {
 
 html {
   background-color: var(--bg-color);
+}
+
+@media (max-width: 768px) {
+  h2 {
+    font-size: var(--text-lg);
+  }
 }

@@ -189,7 +189,7 @@ onMounted(() => {
 
 <style scoped>
 .equipos-wrapper {
-  height: 300vh;
+  height: 360vh;
   /* 3 tarjetas → 3 pantallas */
 }
 
@@ -548,6 +548,7 @@ onMounted(() => {
   .card-equipo {
     gap: 2rem;
     padding: 3rem 2rem;
+    height: 50%;
   }
 
   .card-titulo {

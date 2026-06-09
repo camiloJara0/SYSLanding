@@ -178,7 +178,7 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     overflow: hidden;
-    background: #F5F5F5;
+    background: var(--bg-color);
     z-index: 10;
 }
 

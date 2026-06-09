@@ -86,9 +86,9 @@ onMounted(async() => {
             <!-- GALERÍA IZQUIERDA -->
             <div class="producto-hero">
                 <div
-                    class="bg-linear-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 p-8">
-                    <img :src="imagenPrincipal" :alt="productoSeleccionado.EQUIPO"
-                        class="w-full h-auto object-contain" />
+                    class="bg-linear-to-br from-[var(--bg-color)] to-gray-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 p-8">
+                    <img :src="productoSeleccionado.IMAGEN" :alt="productoSeleccionado.EQUIPO"
+                        class="w-full h-[50vh] object-cover" />
                 </div>
 
                 <!-- Miniaturas (placeholder) -->
@@ -154,7 +154,7 @@ onMounted(async() => {
 
                     <!-- Botones CTA -->
                     <div class="grid grid-cols-2 gap-3">
-                        <UButton class="py-3 text-base font-semibold"
+                        <UButton class="py-3 text-base font-semibold flex justify-center text-white"
                             :style="{ backgroundColor: '#3B82F6', borderColor: '#3B82F6' }"
                             @click="agregarProducto(productoSeleccionado)">
                             <UIcon name="i-lucide-shopping-cart" class="w-5 h-5 mr-2"></UIcon>

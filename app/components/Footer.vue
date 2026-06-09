@@ -33,8 +33,7 @@ const enlaces = [
 
 const redes = [
   { icon: 'i-lucide-facebook', label: 'Facebook', href: '#' },
-  { icon: 'i-lucide-twitter', label: 'Twitter', href: '#' },
-  { icon: 'i-lucide-linkedin', label: 'LinkedIn', href: '#' },
+  { icon: 'i-lucide-x', label: 'Twitter', href: '#' },
   { icon: 'i-lucide-instagram', label: 'Instagram', href: '#' }
 ]
 
@@ -54,9 +53,10 @@ const contacto = [
         <!-- Logo & Company Info -->
         <div class="lg:col-span-2">
           <div class="mb-6">
-            <h3 class="text-2xl font-bold mb-2">
+            <h3 class="text-2xl font-bold mb-2 flex items-center">
               <span class="bg-linear-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">SYS</span>
               <span class="text-white">S.A.S.</span>
+              <img src="/images/sys.png" alt="Logo SyS S.A.S" width="100">
             </h3>
             <p class="text-gray-400 text-sm">Soluciones médicas de calidad garantizada</p>
           </div>
@@ -99,7 +99,7 @@ const contacto = [
       </div>
 
       <!-- Contact Section -->
-      <div class="bg-linear-to-r from-blue-600/10 to-indigo-600/10 border border-blue-500/20 rounded-2xl p-8 mb-12">
+      <!-- <div class="bg-linear-to-r from-blue-600/10 to-indigo-600/10 border border-blue-500/20 rounded-2xl p-8 mb-12">
         <h4 class="font-semibold text-white mb-6 text-lg flex items-center gap-2">
           <UIcon name="i-lucide-headphones" class="w-5 h-5 text-blue-400"></UIcon>
           Información de Contacto
@@ -125,7 +125,7 @@ const contacto = [
             </div>
           </a>
         </div>
-      </div>
+      </div> -->
 
     </UContainer>
 
@@ -139,12 +139,6 @@ const contacto = [
         <div class="flex gap-6">
           <a href="#" class="text-xs text-gray-500 hover:text-amber-400 transition-colors">
             Política de privacidad
-          </a>
-          <a href="#" class="text-xs text-gray-500 hover:text-amber-400 transition-colors">
-            Términos de uso
-          </a>
-          <a href="#" class="text-xs text-gray-500 hover:text-amber-400 transition-colors">
-            Mapa del sitio
           </a>
         </div>
       </UContainer>
