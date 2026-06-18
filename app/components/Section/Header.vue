@@ -82,39 +82,72 @@ onUnmounted(() => {
 <template>
   <header class="h-[220dvh] relative overflow-hidden">
     <div class="fixed inset-0">
-      <img class="imagenAnimada md:object-center object-[30%_center]" :src="`/images/rural/ezgif-frame-${String(imagenActual).padStart(3, '0')}.jpg`"
-        alt="Animación scroll" />
-      <div class="absolute inset-0 bg-black/10"></div>
+      <img class="imagenAnimada object-[30%_center]"
+        :src="`/images/rural/ezgif-frame-${String(imagenActual).padStart(3, '0')}.jpg`" alt="Animación scroll" />
+      <div class="absolute inset-0 "></div>
     </div>
 
     <!-- Bloque inicial -->
     <UContainer class="h-screen">
       <div class="grid grid-cols-12 grid-rows-12 contenido">
-        <div class="informacion-inicial md:col-span-5 col-span-10 md:col-start-1 col-start-2 md:row-start-3 row-start-4 row-span-3 bg-white/15 md:bg-white/20 rounded-2xl backdrop-blur-xl border border-white/30 shadow-lg md:p-8 md:py-12 p-5 hover:bg-white/25 transition-all duration-300">
-          <h3 class="md:text-3xl! text-2xl font-bold text-gray-700 drop-shadow-lg">SYS S.A.S</h3>
-          <p class="md:text-lg text-base text-gray-700/95 mt-3 md:mt-4 leading-relaxed drop-shadow font-medium">
-            <strong class="text-black">Servicios de ambulancia</strong> para emergencias y traslados,
-            <strong class="text-black">venta de equipos e insumos médicos</strong> certificados.
-          </p>
-        </div>
         <div
-          class="informacion-inicial md:col-span-4 col-span-10 md:col-start-9 col-start-2 md:row-start-4 row-start-8 row-span-3 bg-white/15 md:bg-white/20 rounded-2xl backdrop-blur-xl border border-white/30 shadow-lg md:p-8 md:py-10 p-5 hover:bg-white/25 transition-all duration-300">
-          <h4 class="md:text-3xl text-2xl font-bold text-black drop-shadow-lg">Tu salud, nuestra prioridad</h4>
-          <UButton to="#section-servicios" color="secondary" variant="solid" size="xl" icon="i-lucide-stethoscope" class="mt-4 md:mt-6 text-white font-semibold shadow-md hover:shadow-lg transition-shadow">Ver Servicios
-          </UButton>
+          class="informacion-inicial hero-card relative overflow-hidden md:col-span-6 col-span-10 lg:col-start-1 col-start-2 md:row-start-2 row-start-2 row-span-4 rounded-3xl md:p-8 md:py-12 p-5 hover:bg-white/25 transition-all duration-300">
+          <h3 class="md:text-xl! text-base! font-bold text-gray-700 drop-shadow-lg">SYS S.A.S</h3>
+          <h3 class="md:text-3xl! text-base text-gray-700/95 mt-3 md:my-4 leading-relaxed drop-shadow font-medium ">
+            <strong class="text-black">Respuesta rápida,</strong> <br>
+            cuidado humano.
+          </h3>
+          <p class="md:text-lg text-base text-gray-700/95 mt-3 md:mt-4 leading-relaxed drop-shadow font-medium">
+            <strong class="text-black">Ambulancias cértificadas,</strong> perosnal ceritificado y equipos
+            <strong class="text-black">de ultima generación para cada</strong> emergencia.
+          </p>
+          <div class="flex md:flex-row flex-col gap-3 py-5 px-10">
+            <div class="flex gap-1 items-center justify-center">
+              <UIcon name="i-lucide-shield" size="2xl" class="md:text-5xl text-2xl"></UIcon>
+              <p class="text-xs! font-bold">Seguridad certificada</p>
+            </div>
+            <div class="h-full w-1 bg-gray-400"></div>
+            <div class="flex gap-1 items-center justify-center">
+              <UIcon name="i-lucide-user" size="xl" class="md:text-5xl text-2xl"></UIcon>
+              <p class="text-xs! font-bold">Profesionales especializados</p>
+            </div>
+            <div class="h-full w-1 bg-gray-200"></div>
+            <div class="flex gap-1 items-center justify-center">
+              <UIcon name="i-lucide-clock" size="xl" class="md:text-5xl text-2xl"></UIcon>
+              <p class="text-xs! font-bold">Disponibilidad 24/7</p>
+            </div>
+          </div>
+
+          <div class="flex gap-3 py-4">
+            <UButton color="secondary" class="py-3 md:px-8 rounded-2xl">Contactar</UButton>
+            <UButton to="/#section-servicios" color="neutral" variant="soft" class="py-3 md:px-8 rounded-2xl">Ver Servicios</UButton>
+          </div>
         </div>
+
+        <!-- <div
+          class="informacion-inicial md:col-span-4 col-span-10 md:col-start-9 col-start-2 md:row-start-4 row-start-8 row-span-2 bg-white/15 md:bg-white/20 rounded-2xl backdrop-blur-xl border border-white/30 shadow-lg md:p-8 md:py-10 p-5 hover:bg-white/25 transition-all duration-300">
+          <h4 class="md:text-3xl text-2xl font-bold text-black drop-shadow-lg">Tu salud, nuestra prioridad</h4>
+          <UButton to="#section-servicios" color="secondary" variant="solid" size="xl" icon="i-lucide-stethoscope"
+            class="mt-4 md:mt-6 text-white font-semibold shadow-md hover:shadow-lg transition-shadow">Ver Servicios
+          </UButton>
+        </div> -->
       </div>
     </UContainer>
 
     <!-- Bloque ambulancia -->
     <UContainer class="h-screen">
       <div class="grid grid-cols-12 grid-rows-12 contendio">
-        <div class="ambulancia md:col-span-6 col-span-10 md:col-start-7 col-start-2 row-start-4 row-span-4 bg-white/15 md:bg-white/20 rounded-2xl backdrop-blur-xl border border-white/30 shadow-lg md:p-8 md:py-10 p-5 hover:bg-white/25 transition-all duration-300">
-          <h3 class="md:text-4xl text-2xl font-bold py-2 md:py-3 text-white drop-shadow-lg flex items-center gap-3">Servicio de Ambulancia <UIcon name="i-lucide-car"></UIcon></h3>
+        <div
+          class="ambulancia md:col-span-6 col-span-10 md:col-start-7 col-start-2 row-start-4 row-span-4 hero-card rounded-2xl md:p-8 md:py-10 p-5 hover:bg-white/25 transition-all duration-300">
+          <h3 class="md:text-4xl text-2xl font-bold py-2 md:py-3 text-white drop-shadow-lg flex items-center gap-3">
+            Servicio de Ambulancia <UIcon name="i-lucide-car"></UIcon>
+          </h3>
           <p class="md:text-lg text-base text-gray-800/95 mt-3 md:mt-4 leading-relaxed font-medium drop-shadow">
             Atención rápida y segura, con personal capacitado y unidades modernas para emergencias y traslados.
           </p>
-          <UButton to="#" color="secondary" variant="solid" size="xl" icon="i-lucide-phone" class="mt-4 md:mt-6 text-white font-semibold shadow-md hover:shadow-lg transition-shadow">Contactar</UButton>
+          <UButton to="#" color="secondary" variant="solid" size="xl" icon="i-lucide-phone"
+            class="mt-4 md:mt-6 text-white font-semibold shadow-md hover:shadow-lg transition-shadow">Contactar
+          </UButton>
         </div>
       </div>
     </UContainer>
@@ -144,5 +177,26 @@ onUnmounted(() => {
   position: relative;
   z-index: 1;
   /* para que el texto quede encima de la imagen */
+}
+
+.hero-card {
+  position: relative;
+}
+
+.hero-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255,255,255,0.9) 0%,
+    rgba(255,255,255,0.75) 35%,
+    rgba(255,255,255,0.3) 60%,
+    rgba(255,255,255,0.05) 80%,
+    transparent 100%
+  );
+
+  z-index: -1;
 }
 </style>

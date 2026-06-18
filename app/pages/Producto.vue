@@ -27,7 +27,7 @@ const productosRecomendados = computed(() => {
     return productosActuales.slice(0, 6)
 })
 
-onMounted(async() => {
+onMounted(async () => {
     if (!productoSeleccionado.value.EQUIPO) {
         volver()
     }
@@ -86,7 +86,7 @@ onMounted(async() => {
             <!-- GALERÍA IZQUIERDA -->
             <div class="producto-hero">
                 <div
-                    class="bg-linear-to-br from-[var(--bg-color)] to-gray-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 p-8">
+                    class="bg-linear-to-br from-(--bg-color) to-gray-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 p-8">
                     <img :src="productoSeleccionado.IMAGEN" :alt="productoSeleccionado.EQUIPO"
                         class="w-full h-[50vh] object-cover" />
                 </div>
@@ -225,62 +225,61 @@ onMounted(async() => {
             </div>
 
             <!-- Grid de recomendaciones -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="relative cursor-pointer group font-[Outfit] rounded-2xl" v-for="(item, i) in productosRecomendados" :key="i">
-                    <div
-                        class="absolute -left-3.5 top-0 bottom-auto w-10.5 z-10 flex items-center justify-center pointer-events-none rounded-2xl">
-                        <span class="text-[#1565C0] font-black uppercase leading-none select-none opacity-10"
-                            style="writingMode: vertical-rl; textOrientation: mixed; transform: rotate(180deg); fontSize: 38px; letterSpacing: -0.02em; whiteSpace: nowrap;">
-                            {{ item.CATEGORIA.split(' ')[0] }}
-                        </span>
-                    </div>
-                    <nuxt-link to="/Producto" 
-                        @click="productoSeleccionado = item"
-                        class="md:h-[45vh] h-[30vh] group w-70 rounded-[20px] overflow-hidden bg-white shadow-[0_4px_24px_rgba(10,60,120,0.13)] hover:shadow-[0_16px_48px_rgba(10,60,120,0.22)] hover:-translate-y-1.5 transition-all duration-300 cursor-pointer">
-    
-                        <!-- Escena IMG producto (cada uno con su propio IMG) -->
-                        <div class="relative w-full h-47.5 overflow-hidden bg-blue-100">
-                            <img src="/images/equipos.jpg" alt="Equipo BIPAP"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-400 rounded-t-2xl" />
-                            <span
-                                class="absolute top-3 left-3 bg-white/90 text-blue-700 text-[11px] font-semibold uppercase tracking-widest px-3 py-1 rounded-full border border-blue-200">
-                                Disponible
-                            </span>
+            <div
+                class="products-grid grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                <nuxt-link v-for="(item, i) in productosRecomendados" :key="i" to="/Producto"
+                    @click="productoSeleccionado = item" class="product-card group w-full rounded-2xl overflow-hidden">
+                    <!-- Card Container -->
+                    <div class="overflow-hidden transition-all duration-300 h-full flex">
+
+                        <!-- Image Container -->
+                        <div
+                            class="overflow-hidden rounded-2xl relative w-[65%] aspect-square bg-linear-to-b from-[#88A5B7] to-(--bg-color) hover:border-gold/50 shadow-sm hover:shadow-xl">
+                            <img :src="item.IMAGEN" :alt="item.EQUIPO"
+                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
+                            <!-- Overlay gradient on hover -->
+                            <div
+                                class="absolute inset-0 bg-linear-to-t from-black/0 to-black/0 group-hover:from-black/20 group-hover:to-black/0 transition-all duration-300" />
                         </div>
-                        <div class="relative px-5.5 pt-5 pb-5.5 rounded-b-2xl"
-                            style="background: linear-gradient(160deg, #1565C0 0%, #1E88E5 60%, #29B6F6 100%)">
-                            <div class="absolute top-0 left-0 right-0 h-0.75"
-                                style="background: linear-gradient(90deg, rgba(255,255,255,0.13), rgba(255,255,255,0.4), rgba(255,255,255,0.13))" />
-                            <p class="text-xs! font-semibold uppercase tracking-[0.06em] text-white/65 mb-0.5">
-                                Equipo médico
-                            </p>
-                            <h2 class="text-lg! font-bold text-white tracking-tight mb-3.5">
-                                {{ item.EQUIPO.length > 25 ? item.EQUIPO.substring(0, 25) + '...' : item.EQUIPO }}
-                            </h2>
-                            <div class="h-px bg-white/20 mb-4" />
-    
-                            <div class="flex items-end gap-1.5 mb-4.5">
-                                <span class="text-base font-semibold text-white/75 mb-0.5">$</span>
-                                <div>
-                                    <span class="text-lg! font-bold text-white leading-none">{{
-                                        item.V_UNITARIO.toLocaleString("es-CO") }}</span>
-                                </div>
+
+                        <!-- Content -->
+                        <div class="p-5 flex flex-col grow">
+                            <!-- Category Badge -->
+                            <div class="mb-1">
+                                <span
+                                    class="inline-block px-3 py-1 neoCard text-blue-700 text-xs font-semibold uppercase tracking-wider rounded-full">
+                                    Equipo médico
+                                </span>
                             </div>
-                        </div>
-                        <!-- <div class="px-4 pt-2">
-                            <h3 class="md:text-lg! text-base! text-white!">
-                                {{ item.EQUIPO.length > 25 ? item.EQUIPO.substring(0, 25) + '...' : item.EQUIPO }}
+
+                            <!-- Title -->
+                            <h3
+                                class="text-base! lg:text-lg! font-semibold text-gray-900 mb-1 group-hover:text-gold transition-colors duration-200 line-clamp-2">
+                                {{ item.EQUIPO }}
                             </h3>
-                            <p class="eq-desc text-white">${{ item.V_UNITARIO.toLocaleString("es-CO") }}</p>
-    
-                            <div class="eq-footer">
-                                <UButton to="/Producto" color="neutral" variant="soft" size="xs"
-                                    @click="productoSeleccionado = item">Ver más</UButton>
+
+                            <p class="text-gray-600 text-sm">
+                                {{ item.DESCRIPCION.substring(0, 50) }}...
+                            </p>
+
+                            <!-- Price -->
+                            <div class="mt-auto pt-1 border-t border-gray-100">
+                                <p class="text-gray-600 text-sm mb-2">Precio unitario</p>
+                                <p class="text-2xl font-bold text-gold">
+                                    ${{ (item.V_UNITARIO / 1000).toLocaleString("es-CO", { maximumFractionDigits: 0 })
+                                    }}K
+                                </p>
                             </div>
-    
-                        </div> -->
-                    </nuxt-link>
-                </div>
+
+                            <div>
+                                <UButton color="blue" variant="subtle" class="neoCard rounded-2xl">
+                                    Mas Información
+                                </UButton>
+                            </div>
+
+                        </div>
+                    </div>
+                </nuxt-link>
             </div>
         </div>
     </UContainer>
@@ -343,5 +342,11 @@ input[type="number"]::-webkit-inner-spin-button {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+.neoCard {
+    background: #e4ebf3;
+    box-shadow:  20px 20px 60px #c2c8cf,
+                -20px -20px 60px #ffffff;
 }
 </style>

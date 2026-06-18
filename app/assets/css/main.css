@@ -6,7 +6,7 @@
   --ui-secondary: #1E3A8A;
   --font-primary: 'Space Grotesk', sans-serif;
   --font-secondary: 'Montserrat', sans-serif;
-  --bg-color: #dae5f2;
+  --bg-color: #e4ebf3;
   --card-gradient: linear-gradient( 135deg, #f0f1f4 0%, #c6cfe9 50%, #a8b7e2 100%);
   --deep-blue: #1E3A8A;
   --light-blue: #3B82F6;
@@ -21,8 +21,7 @@ body {
   background-color: var(--bg-color);
   color: var(--deep-blue);
   line-height: 1.6;
-  position: relative;
-  z-index: 30;
+  padding-right: 0 !important;
 }
 
 /* Encabezados con Montserrat para impacto */
@@ -53,11 +52,6 @@ h3 {
 p {
   font-size: 1rem;
   font-family: var(--font-primary);
-  margin-bottom: 1rem;
-}
-
-html {
-  background-color: var(--bg-color);
 }
 
 @media (max-width: 768px) {

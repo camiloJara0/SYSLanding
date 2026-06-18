@@ -1,7 +1,7 @@
 export const catalogo = [
     {
         "EQUIPO": "ASPIRADOR DE SECRECIONES",
-        "IMAGEN": "/catalogo-sys/AspiradorSecreciones.png",
+        "IMAGEN": "/catalogo-sys/AspiradorSecreciones-sinFondo.png",
         "CATEGORIA": "Equipos de Aspiración",
         "DESCRIPCION": "Aspirador de secreciones de alta eficiencia con potencia de 90 VA. Garantiza pacientes seguros y cómodos. Tecnología confiable para hospitales modernos.",
         "CARACTERISTICAS": {
@@ -24,7 +24,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "ATRIL PARA BOMBA",
-        "IMAGEN": "/catalogo-sys/AtrilParaBombas.png",
+        "IMAGEN": "/catalogo-sys/AtrilParaBombas-sinFondo.png",
         "CATEGORIA": "Accesorios para Bombas",
         "DESCRIPCION": "Atril ajustable para bombas de infusión con estabilidad superior. Ruedas de calidad y carga de 8 kg. Solución hospitalaria completa.",
         "CARACTERISTICAS": {
@@ -45,7 +45,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "BIPAP",
-        "IMAGEN": "/catalogo-sys/Bipap.png",
+        "IMAGEN": "/catalogo-sys/Bipap-sinFondo.png",
         "CATEGORIA": "Equipos Respiratorios",
         "DESCRIPCION": "BiPAP avanzado para apnea de sueño con humidificación inteligente. Conectividad inalámbrica y pantalla intuitiva. Respiración tranquila garantizada.",
         "CARACTERISTICAS": {
