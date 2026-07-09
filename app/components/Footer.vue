@@ -56,7 +56,7 @@ const contacto = [
             <h3 class="text-2xl font-bold mb-2 flex items-center">
               <span class="bg-linear-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">SYS</span>
               <span class="text-white">S.A.S.</span>
-              <img src="/images/sys.png" alt="Logo SyS S.A.S" width="100">
+              <img src="/images/sys.png" alt="Logo SyS S.A.S" width="120">
             </h3>
             <p class="text-gray-400 text-sm">Soluciones médicas de calidad garantizada</p>
           </div>

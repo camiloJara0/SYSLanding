@@ -36,13 +36,13 @@ onMounted(() => {
         router.push('/#section-servicios')
       }
     },
-    {
-      label: 'Productos',
-      icon: 'i-lucide-stethoscope',
-      onSelect: () => {
-        router.push('/#section-productos')
-      }
-    },
+    // {
+    //   label: 'Productos',
+    //   icon: 'i-lucide-stethoscope',
+    //   onSelect: () => {
+    //     router.push('/#section-productos')
+    //   }
+    // },
     {
       label: 'Catalogo',
       icon: 'i-lucide-list',
@@ -65,8 +65,11 @@ const links = [
   <UContainer class="navbar backdrop-blur-xl bg-white/10 w-full">
     <UDashboardNavbar title="Inbox" class=" w-full px-6" :toggle="{ color: 'primary', }">
       <template #left>
-        SYS S.A.S.
-        <img src="/images/sys.png" alt="logo sys sas" width="60">
+            <p class="text-lg font-bold mb-2 flex items-center">
+              <span class="bg-linear-to-r from-amber-500 to-amber-700 bg-clip-text text-transparent">SYS</span>
+              <span class="text-black">S.A.S.</span>
+              <img src="/images/sysLogo.png" alt="Logo SyS S.A.S" width="40">
+            </p>
       </template>
 
       <template #right>

@@ -122,7 +122,7 @@ onMounted(async () => {
                 <div class="mb-8 pb-6 border-b-2 border-gray-200">
                     <div class="flex items-baseline gap-3 mb-2">
                         <span class="text-3xl font-bold text-gray-900">
-                            ${{ productoSeleccionado.V_UNITARIO?.toLocaleString('es-ES') || '—' }}
+                            $ {{ productoSeleccionado.V_UNITARIO?.toLocaleString('es-ES') || '—' }}
                         </span>
                         <span class="text-lg text-gray-500">/unidad</span>
                     </div>
@@ -197,15 +197,34 @@ onMounted(async () => {
             </h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div v-for="(car, idx) in caracteristicasArray" :key="idx"
-                    class="caracteristica-item bg-white p-5 rounded-xl shadow-sm border-l-4 hover:shadow-md "
-                    :style="{ borderLeftColor: '#3B82F6' }">
-                    <h3 class="text-sm! font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                        {{ car.clave }}
-                    </h3>
-                    <p class="text-base! font-bold text-gray-900">
-                        {{ car.valor || '—' }}
-                    </p>
+                <div
+                v-for="(car, idx) in caracteristicasArray"
+                :key="idx"
+                class="caracteristica-item bg-white p-5 rounded-xl shadow-sm border-l-4 hover:shadow-md"
+                :style="{ borderLeftColor: '#3B82F6' }"
+                >
+                <h3 class="text-sm! font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+                    {{ car.clave }}
+                </h3>
+
+                <!-- Si es un objeto o array -->
+                <template v-if="car.valor && typeof car.valor === 'object'">
+                    <ul class="list-disc list-inside space-y-1">
+                    <li v-for="(item, index) in car.valor" :key="index">
+                        <template v-if="typeof item === 'object'">
+                        {{ JSON.stringify(item) }}
+                        </template>
+                        <template v-else>
+                        {{ item }}
+                        </template>
+                    </li>
+                    </ul>
+                </template>
+
+                <!-- Si es un valor simple -->
+                <p v-else class="text-base! font-bold text-gray-900">
+                    {{ car.valor || '—' }}
+                </p>
                 </div>
             </div>
         </div>
@@ -266,8 +285,7 @@ onMounted(async () => {
                             <div class="mt-auto pt-1 border-t border-gray-100">
                                 <p class="text-gray-600 text-sm mb-2">Precio unitario</p>
                                 <p class="text-2xl font-bold text-gold">
-                                    ${{ (item.V_UNITARIO / 1000).toLocaleString("es-CO", { maximumFractionDigits: 0 })
-                                    }}K
+                                    $ {{ item.V_UNITARIO.toLocaleString("es-CO", { maximumFractionDigits: 0 })}}
                                 </p>
                             </div>
 

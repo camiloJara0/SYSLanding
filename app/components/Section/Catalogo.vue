@@ -43,13 +43,14 @@ const isFilterActive = computed(() => categoriaSeleccionada.value || busqueda.va
                             size="lg"
                             placeholder="Buscar equipos..." 
                             class="search-input w-full"
+                            
                             @focus="searchFocused = true"
                             @blur="searchFocused = false"
                         />
                         <div v-if="busqueda" class="absolute right-3 top-1/2 -translate-y-1/2">
                             <UButton 
                                 icon="i-lucide-x" 
-                                color="gray"
+                                color="neutral"
                                 variant="ghost"
                                 size="sm"
                                 @click="busqueda = ''"
@@ -181,7 +182,7 @@ const isFilterActive = computed(() => categoriaSeleccionada.value || busqueda.va
                                     <div class="mt-auto pt-1 border-t border-gray-100">
                                         <p class="text-gray-600 text-sm mb-2">Precio unitario</p>
                                         <p class="text-2xl font-bold text-gold">
-                                            ${{ (item.V_UNITARIO / 1000).toLocaleString("es-CO", { maximumFractionDigits: 0 }) }}K
+                                            $ {{ item.V_UNITARIO.toLocaleString("es-CO", { maximumFractionDigits: 0 }) }}
                                         </p>
                                     </div>
 
@@ -199,12 +200,12 @@ const isFilterActive = computed(() => categoriaSeleccionada.value || busqueda.va
                     <!-- Empty State -->
                     <div v-else class="col-span-full py-16 text-center">
                         <div class="space-y-4">
-                            <i class="i-lucide-inbox text-6xl text-gray-300 mx-auto block" />
+                            <UIcon name="i-lucide-inbox" class="text-6xl text-gray-300 mx-auto block" />
                             <p class="text-gray-600 text-lg">No se encontraron productos</p>
                             <p class="text-gray-400 text-sm">Intenta ajustar tus filtros o búsqueda</p>
                             <UButton 
                                 @click="borrarFiltros" 
-                                color="blue"
+                                color="neutral"
                                 variant="soft"
                                 class="mt-4"
                             >
@@ -244,7 +245,6 @@ const isFilterActive = computed(() => categoriaSeleccionada.value || busqueda.va
     border-radius: 0.75rem;
     border: 1.5px solid #e5e7eb;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background: white;
 }
 
 .search-input :deep(input:focus) {

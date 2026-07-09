@@ -92,7 +92,10 @@ onUnmounted(() => {
       <div class="grid grid-cols-12 grid-rows-12 contenido">
         <div
           class="informacion-inicial hero-card relative overflow-hidden md:col-span-6 col-span-10 lg:col-start-1 col-start-2 md:row-start-2 row-start-2 row-span-4 rounded-3xl md:p-8 md:py-12 p-5 hover:bg-white/25 transition-all duration-300">
-          <h3 class="md:text-xl! text-base! font-bold text-gray-700 drop-shadow-lg">SYS S.A.S</h3>
+            <h3 class="text-2xl font-bold mb-2 flex items-center">
+              <span class="bg-linear-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">SYS</span>
+              <span class="text-blue-800">S.A.S.</span>
+            </h3>
           <h3 class="md:text-3xl! text-base text-gray-700/95 mt-3 md:my-4 leading-relaxed drop-shadow font-medium ">
             <strong class="text-black">Respuesta rápida,</strong> <br>
             cuidado humano.
@@ -119,7 +122,7 @@ onUnmounted(() => {
           </div>
 
           <div class="flex gap-3 py-4">
-            <UButton color="secondary" class="py-3 md:px-8 rounded-2xl">Contactar</UButton>
+            <UButton color="secondary" class="py-3 md:px-8 rounded-2xl text-white">Contactar</UButton>
             <UButton to="/#section-servicios" color="neutral" variant="soft" class="py-3 md:px-8 rounded-2xl">Ver Servicios</UButton>
           </div>
         </div>
