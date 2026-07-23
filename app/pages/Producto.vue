@@ -14,7 +14,7 @@ const router = useRouter()
 
 function volver() {
     router.push('/#section-catalogo')
-    store.productoSeleccionado = {}
+    // store.productoSeleccionado = {}
 }
 
 const caracteristicasArray = computed(() => {
@@ -72,7 +72,7 @@ onMounted(async () => {
 
     <UContainer class="py-8 pt-18">
         <!-- Breadcrumb -->
-        <div class="mb-8 text-sm text-gray-600">
+        <div class="mb-8 text-sm text-gray-600" id="inicio-producto">
             <NuxtLink to="/" class="hover:text-blue-600 transition-colors">Home</NuxtLink>
             <span class="mx-2">/</span>
             <NuxtLink to="/#section-catalogo" class="hover:text-blue-600 transition-colors">Productos</NuxtLink>
@@ -86,16 +86,21 @@ onMounted(async () => {
             <!-- GALERÍA IZQUIERDA -->
             <div class="producto-hero">
                 <div
-                    class="bg-linear-to-br from-(--bg-color) to-gray-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 p-8">
+                    class="bg-linear-to-br from-(--bg-color) to-gray-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 p-8 h-[60vh]">
                     <img :src="productoSeleccionado.IMAGEN" :alt="productoSeleccionado.EQUIPO"
-                        class="w-full h-[50vh] object-cover" />
+                        class="w-full h-full object-contain" />
                 </div>
 
                 <!-- Miniaturas (placeholder) -->
                 <div class="grid grid-cols-4 gap-3 mt-6">
                     <div v-for="i in 4" :key="i"
-                        class="aspect-square bg-gray-100 rounded-lg cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all duration-200">
-                        <img :src="imagenPrincipal" alt="thumbnail" class="w-full h-full object-cover rounded-lg" />
+                        class="aspect-square bg-gray-100 rounded-lg cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all duration-200 overflow-hidden">
+                        <img :src="productoSeleccionado.IMAGEN" alt="thumbnail" class="w-full h-full object-cover rounded-lg" :class="{
+                            'scale-[1.2] object-[0%_0%]': i === 1,
+                            'scale-[4.0] object-[60%_30%]': i === 2,
+                            'scale-[1.5] object-[20%_40%]': i === 3,
+                            'scale-[5.0] object-[100%_100%]': i === 4
+                        }" />
                     </div>
                 </div>
             </div>
@@ -160,7 +165,7 @@ onMounted(async () => {
                             <UIcon name="i-lucide-shopping-cart" class="w-5 h-5 mr-2"></UIcon>
                             Añadir a cotización
                         </UButton>
-                        <UButton variant="soft" color="gray" class="py-3 text-base font-semibold" @click="volver">
+                        <UButton to="/#section-catalogo" variant="soft" color="gray" class="py-3 text-base font-semibold" @click="volver">
                             <UIcon name="i-lucide-arrow-left" class="w-5 h-5 mr-2"></UIcon>
                             Atrás
                         </UButton>
@@ -246,7 +251,7 @@ onMounted(async () => {
             <!-- Grid de recomendaciones -->
             <div
                 class="products-grid grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-                <nuxt-link v-for="(item, i) in productosRecomendados" :key="i" to="/Producto"
+                <nuxt-link v-for="(item, i) in productosRecomendados" :key="i" to="/Producto/#inicio-producto"
                     @click="productoSeleccionado = item" class="product-card group w-full rounded-2xl overflow-hidden">
                     <!-- Card Container -->
                     <div class="overflow-hidden transition-all duration-300 h-full flex">
@@ -255,7 +260,7 @@ onMounted(async () => {
                         <div
                             class="overflow-hidden rounded-2xl relative w-[65%] aspect-square bg-linear-to-b from-[#88A5B7] to-(--bg-color) hover:border-gold/50 shadow-sm hover:shadow-xl">
                             <img :src="item.IMAGEN" :alt="item.EQUIPO"
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
+                                class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500 ease-out" />
                             <!-- Overlay gradient on hover -->
                             <div
                                 class="absolute inset-0 bg-linear-to-t from-black/0 to-black/0 group-hover:from-black/20 group-hover:to-black/0 transition-all duration-300" />

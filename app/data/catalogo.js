@@ -1,7 +1,7 @@
 export const catalogo = [
     {
         "EQUIPO": "ASPIRADOR DE SECRECIONES",
-        "IMAGEN": "/catalogo-sys/AspiradorSecreciones-sinFondo.png",
+        "IMAGEN": "/catalogo/aspirador_secreciones.png",
         "CATEGORIA": "Equipos de Aspiración",
         "DESCRIPCION": "Aspirador de secreciones de alta eficiencia con potencia de 90 VA. Garantiza pacientes seguros y cómodos. Tecnología confiable para hospitales modernos.",
         "CARACTERISTICAS": {
@@ -24,7 +24,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "ATRIL PARA BOMBA",
-        "IMAGEN": "/catalogo-sys/AtrilParaBombas-sinFondo.png",
+        "IMAGEN": "/catalogo/atril_para_bomba.png",
         "CATEGORIA": "Accesorios para Bombas",
         "DESCRIPCION": "Atril ajustable para bombas de infusión con estabilidad superior. Ruedas de calidad y carga de 8 kg. Solución hospitalaria completa.",
         "CARACTERISTICAS": {
@@ -45,7 +45,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "BIPAP",
-        "IMAGEN": "/catalogo-sys/Bipap-sinFondo.png",
+        "IMAGEN": "/catalogo/bipap.png",
         "CATEGORIA": "Equipos Respiratorios",
         "DESCRIPCION": "BiPAP avanzado para apnea de sueño con humidificación inteligente. Conectividad inalámbrica y pantalla intuitiva. Respiración tranquila garantizada.",
         "CARACTERISTICAS": {
@@ -71,7 +71,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "MASCARILLA BIPAP",
-        "IMAGEN": "/catalogo-sys/MascarillaBipap.png",
+        "IMAGEN": "/catalogo/mascarilla_bipap.png",
         "CATEGORIA": "Accesorios Respiratorios",
         "DESCRIPCION": "Mascarilla BiPAP anatómica en silicona médica. Cómoda, segura y de larga duración. Compatible con CPAP estándar. Comodidad garantizada.",
         "CARACTERISTICAS": {
@@ -89,7 +89,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "CPAP",
-        "IMAGEN": "/catalogo-sys/Cpap.png",
+        "IMAGEN": "/catalogo/cpap.png",
         "CATEGORIA": "Equipos Respiratorios",
         "DESCRIPCION": "CPAP binivel autoajustable con tecnología Easy-Breathe. Tratamiento efectivo de apnea obstructiva. Presión adaptativa para máximo confort.",
         "CARACTERISTICAS": {
@@ -106,7 +106,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "MASCARILLA BIPAP",
-        "IMAGEN": "/catalogo-sys/MascarillaBipap.png",
+        "IMAGEN": "/catalogo/mascarilla_bipap.png",
         "CATEGORIA": "Accesorios Respiratorios",
         "DESCRIPCION": "Segunda mascarilla BiPAP premium en silicona hipoalergénica. Diseño ergonómico con arnés de 4 puntos. Confort duradero e inmejorable.",
         "CARACTERISTICAS": {
@@ -124,7 +124,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "BOMBA DE ALIMENTACION KL5031N",
-        "IMAGEN": "/catalogo-sys/BombaAlimentacion.png",
+        "IMAGEN": "/catalogo/bomba_alimentacion.png",
         "CATEGORIA": "Bombas de Infusión",
         "DESCRIPCION": "Bomba de alimentación rotativa con 5 modos clínicos avanzados. Precisión ±8% y batería recargable de 5 horas. Seguridad máxima garantizada.",
         "CARACTERISTICAS": {
@@ -148,7 +148,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "BOMBA DE INFUSION KL8052 N",
-        "IMAGEN": "/catalogo-sys/BombaInfusion.png",
+        "IMAGEN": "/catalogo/bomba_infusion.png",
         "CATEGORIA": "Bombas de Infusión",
         "DESCRIPCION": "Bomba infusora peristáltica con 8 modos avanzados y sensor doble de burbujas. Precisión ±3% y biblioteca de medicamentos. Control total.",
         "CARACTERISTICAS": {
@@ -178,7 +178,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "ESTACION DE ACOPLAMIENTO PARA BOMBA",
-        "IMAGEN": "/catalogo-sys/EstacionAcoplamientoBomba.png",
+        "IMAGEN": "/catalogo/estacion_acoplamiento.png",
         "CATEGORIA": "Accesorios para Bombas",
         "DESCRIPCION": "Estación táctil inalámbrica con sensor de huellas para monitorización central. Transporte sin interrupciones y llamado enfermería integrado.",
         "CARACTERISTICAS": {
@@ -199,7 +199,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "CAMA MANUAL 3 MOVIMIENTOS",
-        "IMAGEN": "/catalogo-sys/CamaManual.png",
+        "IMAGEN": "/catalogo/cama_manual.png",
         "CATEGORIA": "Mobiliario Hospitalario",
         "DESCRIPCION": "Cama hospitalaria manual con 3 movimientos independientes. Carga 240 kg, ruedas de calidad y acabados lisos. Comodidad y durabilidad.",
         "CARACTERISTICAS": {
@@ -221,7 +221,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "MESA DE NOCHE",
-        "IMAGEN": "/catalogo-sys/MesaNoche.png",
+        "IMAGEN": "/catalogo/mesa_de_noche.png",
         "CATEGORIA": "Mobiliario Hospitalario",
         "DESCRIPCION": "Mesa de noche ABS con gavetas de almacenamiento. Dimensiones compactas y fácil limpieza. Accesorio esencial para habitaciones.",
         "CARACTERISTICAS": {
@@ -237,7 +237,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "CONCENTRADOR DE OXIGENO ALTO FLUJO",
-        "IMAGEN": "/catalogo-sys/ConcentracionOxigenoAltoFlujo.png",
+        "IMAGEN": "/catalogo/concentrador_oxigeno_alto_flujo.png",
         "CATEGORIA": "Equipos de Oxígeno",
         "DESCRIPCION": "Concentrador oxígeno alto flujo 10L con pureza 93±3% y humidificador externo. 8 funciones avanzadas. Confiabilidad hospitalaria comprobada.",
         "CARACTERISTICAS": {
@@ -269,7 +269,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "CONCENTRADOR DE OXIGENO BAJO FLUJO",
-        "IMAGEN": "/catalogo-sys/ConcentracionOxigenoBajoFlujo.png",
+        "IMAGEN": "/catalogo/concentrador_oxigeno_bajo_flujo.png",
         "CATEGORIA": "Equipos de Oxígeno",
         "DESCRIPCION": "Concentrador bajo flujo 2 en 1 con nebulizador integrado. Filtración de 5 niveles, muy silencioso y portátil. Tecnología USA premium.",
         "CARACTERISTICAS": {
@@ -292,7 +292,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "FLUJOMETRO SENCILLO",
-        "IMAGEN": "/catalogo-sys/FlujometroSencillo.png",
+        "IMAGEN": "/catalogo/flujometro_sencillo.png",
         "CATEGORIA": "Accesorios de Oxígeno",
         "DESCRIPCION": "Flujómetro oxígeno 0-15 lpm con cuerpo cromado de precisión. Tubo policarbonato resistente. Accesorio confiable y económico.",
         "CARACTERISTICAS": {
@@ -310,7 +310,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "MONITOR DE SIGNOS VITALES BASICO",
-        "IMAGEN": "/catalogo-sys/MonitorSignosVitales.png",
+        "IMAGEN": "/catalogo/monitor_signos_vitales_basico.png",
         "CATEGORIA": "Monitores",
         "DESCRIPCION": "Monitor signos vitales básico para adultos, pediátricos y neonatos. Pantalla LCD 8 y batería 12 horas. Portátil y completo.",
         "CARACTERISTICAS": {
@@ -337,7 +337,7 @@ export const catalogo = [
 
     {
         "EQUIPO": "MONITOR DE SIGNOS VITALES CON 2IBP Y CAPNOGRAFIA SERIE M",
-        "IMAGEN": "/catalogo-sys/MonitorSignosVitalesCapnografia.png",
+        "IMAGEN": "/catalogo/monitor_signos_vitales_capnografia.png",
         "CATEGORIA": "Monitores",
         "DESCRIPCION": "Monitor avanzado 10.4 con 2IBP y capnografía. 7 derivaciones ECG y doble pantalla espejo. Tecnología profesional hospitalaria.",
         "CARACTERISTICAS": {
@@ -361,7 +361,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "OXIMETRO DE PULSO",
-        "IMAGEN": "/catalogo-sys/OximetroPulso.png",
+        "IMAGEN": "/catalogo/oximetro_de_pulso.png",
         "CATEGORIA": "Monitores",
         "DESCRIPCION": "Oxímetro de pulso portátil lectura 8-10 segundos. Pantalla LED 1.5 y alarmas inteligentes. Herramienta esencial económica.",
         "CARACTERISTICAS": {
@@ -383,7 +383,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "REGULADOR DE OXIGENO TIPO ROSCA",
-        "IMAGEN": "/catalogo-sys/ReguladorOxigenoTipoRosca.png",
+        "IMAGEN": "/catalogo/regulador_oxigeno_rosca.png",
         "CATEGORIA": "Accesorios de Oxígeno",
         "DESCRIPCION": "Regulador oxígeno tipo rosca 0-15 LPM con conexión CGA 540. Ajuste preciso y fiable. Solución estándar hospitalaria.",
         "CARACTERISTICAS": {
@@ -399,7 +399,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "REGULADOR DE OXIGENO TIPO ROSCA DOBLE MANOMETRO",
-        "IMAGEN": "/catalogo-sys/ReguladorOxigenoDobleRosca.png",
+        "IMAGEN": "/catalogo/regulador_oxigeno_doble_manometro.png",
         "CATEGORIA": "Accesorios de Oxígeno",
         "DESCRIPCION": "Regulador doble manómetro 0-15 LPM para control óptimo. Monitorización simultánea de presión. Precisión mejorada garantizada.",
         "CARACTERISTICAS": {
@@ -416,7 +416,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "REGULADOR DE YUGO TIPO CLICK",
-        "IMAGEN": "/catalogo-sys/ReguladorYugoClick.png",
+        "IMAGEN": "/catalogo/regulador_yugo_click.png",
         "CATEGORIA": "Accesorios de Oxígeno",
         "DESCRIPCION": "Regulador yugo tipo click 0-15 LPM con conexión CGA 870. Sistema miniclick de precisión. Compatibilidad universal garantizada.",
         "CARACTERISTICAS": {
@@ -432,7 +432,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "REGULADOR DE YUGO TIPO ROSCA",
-        "IMAGEN": "/catalogo-sys/ReguladorYugoRosca.png",
+        "IMAGEN": "/catalogo/regulador_yugo_rosca.png",
         "CATEGORIA": "Accesorios de Oxígeno",
         "DESCRIPCION": "Regulador yugo tipo rosca 0-15 LPM con miniclick integrado. Conexión CGA 540 estándar. Fiabilidad comprobada en centros.",
         "CARACTERISTICAS": {
@@ -448,7 +448,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "REGULADOR DE OXIGENO TIPO CLICK PEDIATRICO",
-        "IMAGEN": "/catalogo-sys/ReguladorOxigenoPediatrico.png",
+        "IMAGEN": "/catalogo/regulador_oxigeno_pediatrico.png",
         "CATEGORIA": "Accesorios de Oxígeno",
         "DESCRIPCION": "Regulador oxígeno pediátrico 0-4 LPM con ajuste en fracciones. Aluminio ligero y preciso. Seguridad máxima para neonatos.",
         "CARACTERISTICAS": {
@@ -467,7 +467,7 @@ export const catalogo = [
 
     {
         "EQUIPO": "VENTILADOR MECANICO LUFT 5",
-        "IMAGEN": "/catalogo-sys/VentiladorMecanico.png",
+        "IMAGEN": "/catalogo/ventilador_mecanico.png",
         "CATEGORIA": "Equipos Respiratorios",
         "DESCRIPCION": "Ventilador LUFT 5 profesional con pantalla táctil 17 y 13 modos avanzados. Capnografía opcional. Tecnología de punta hospitalaria.",
         "CARACTERISTICAS": {
@@ -513,7 +513,7 @@ export const catalogo = [
     },
     {
         "EQUIPO": "VENTILADOR PORTATIL PR4G",
-        "IMAGEN": "/catalogo-sys/VentiladorPortatil.png",
+        "IMAGEN": "/catalogo/ventilador_portatil.png",
         "CATEGORIA": "Equipos Respiratorios",
         "DESCRIPCION": "Ventilador portátil PR4G compacto con 6 modos avanzados. Batería 6 horas y compensación automática. Movilidad sin compromisos.",
         "CARACTERISTICAS": {

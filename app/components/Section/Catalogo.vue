@@ -154,7 +154,7 @@ const isFilterActive = computed(() => categoriaSeleccionada.value || busqueda.va
                                     <img 
                                         :src="item.IMAGEN"
                                         :alt="item.EQUIPO"
-                                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
+                                        class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500 ease-out"
                                     />
                                     <!-- Overlay gradient on hover -->
                                     <div class="absolute inset-0 bg-linear-to-t from-black/0 to-black/0 group-hover:from-black/20 group-hover:to-black/0 transition-all duration-300" />

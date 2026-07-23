@@ -67,7 +67,7 @@ onMounted(() => {
           <p class="text-blue-600 font-semibold text-sm uppercase tracking-wider">Sobre SYS</p>
         </div>
         <h2 class="text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
-          Aire inteligente para <span class="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">espacios que inspiran</span>
+          Aire inteligente para <span class="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">espacios que inspiran</span>
         </h2>
         <p class="text-xl text-gray-600 max-w-3xl mx-auto lg:mx-0">
           Soluciones integrales de ventilación mecánica que transforman la calidad del aire, la eficiencia energética y el confort de los espacios.
@@ -102,7 +102,7 @@ onMounted(() => {
 
         <!-- Imagen -->
         <div class="relative">
-          <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-500/20 rounded-3xl blur-2xl"></div>
+          <div class="absolute inset-0 bg-linear-to-r from-blue-600/20 to-cyan-500/20 rounded-3xl blur-2xl"></div>
           <img src="/images/emergenciasServicio.jpg" alt="SYS Soluciones" class="w-full rounded-3xl shadow-2xl relative z-1 hover:shadow-3xl transition-shadow duration-300" />
         </div>
       </div>
@@ -118,7 +118,7 @@ onMounted(() => {
 
         <div class="valores-grid grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div v-for="(valor, idx) in valores" :key="idx" class="valor-card group p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:border-blue-500/50 hover:bg-white/15 transition-all duration-300 cursor-pointer">
-            <div class="mb-4 inline-flex p-3 rounded-xl bg-gradient-to-br from-blue-100 to-cyan-100 group-hover:from-blue-200 group-hover:to-cyan-200 transition-all duration-300">
+            <div class="mb-4 inline-flex p-3 rounded-xl bg-linear-to-br from-blue-100 to-cyan-100 group-hover:from-blue-200 group-hover:to-cyan-200 transition-all duration-300">
               <UIcon :name="valor.icono" class="text-blue-600 text-2xl" />
             </div>
             <h4 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300">
@@ -132,7 +132,7 @@ onMounted(() => {
       </div>
 
       <!-- Call to Action -->
-      <div class="mt-32 p-12 rounded-3xl bg-gradient-to-r from-blue-600 to-cyan-500 text-center">
+      <div class="mt-32 p-12 rounded-3xl bg-linear-to-r from-blue-600 to-cyan-500 text-center">
         <h4 class="text-3xl font-bold text-white mb-4">¿Listo para transformar tus espacios?</h4>
         <p class="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
           Descubre cómo nuestras soluciones de ventilación inteligente pueden mejorar la calidad del aire y la eficiencia energética.
