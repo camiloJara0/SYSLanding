@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -12,7 +12,7 @@ const equipos = [
     descripcion: 'Venta y alquiler de equipos certificados para hospitales y hogares.',
     detalles: ['Tecnología certificada', 'Mantenimiento incluido', 'Soporte técnico 24/7'],
     tag: 'Equipos',
-    imagen: '/images/equipos.jpg',
+    imagen: '/images/products/equipos.jpeg',
     alt: 'Equipos médicos',
     icon: 'i-lucide-stethoscope',
     color: '#C9A227',
@@ -24,7 +24,7 @@ const equipos = [
     descripcion: 'Materiales y suministros esenciales para procedimientos clínicos.',
     detalles: ['Calidad farmacéutica', 'Trazabilidad completa', 'Entrega rápida'],
     tag: 'Insumos',
-    imagen: '/images/hospital.jpg',
+    imagen: '/images/products/insumos.jpeg',
     alt: 'Insumos médicos',
     icon: 'i-lucide-briefcase-medical',
     color: '#3B82F6',
@@ -32,11 +32,11 @@ const equipos = [
   },
   {
     id: 3,
-    titulo: 'Medicinas',
+    titulo: 'Medicamentos',
     descripcion: 'Medicamentos de uso general y especializado con garantía de calidad.',
     detalles: ['Registro sanitario vigente', 'Asesoría farmacéutica', 'Precios competitivos'],
     tag: 'Medicinas',
-    imagen: '/images/medicinas.png',
+    imagen: '/images/products/medicamentos.jpeg',
     alt: 'Medicinas',
     icon: 'i-lucide-pill',
     color: '#1E3A8A',
@@ -47,138 +47,204 @@ const equipos = [
 const activeCard = ref(0)
 const scrollProgress = ref(0)
 
+const { prefersReducedMotion, isLowEnd, isMobile } = useMotionQuality()
+
+const { crearEnlace } = useWhatsApp()
+function whatsappProducto(titulo) {
+  return crearEnlace(`Hola, quiero información sobre ${titulo}.`)
+}
+
+/**
+ * Diseño estático (sin baraja): se usa en prefers-reduced-motion o en
+ * dispositivos táctiles/angostos. Arranca en `false` para que el SSR
+ * renderice el diseño normal y se active en `onMounted` según el dispositivo.
+ */
+const staticLayout = ref(false)
+
+let ctx = null
+
 onMounted(() => {
-  const cards = gsap.utils.toArray('.card-equipo')
-  const imageElements = gsap.utils.toArray('.card-image-wrapper')
+  const widthMobile = window.matchMedia('(max-width: 768px)').matches
+  const skipAnimation = prefersReducedMotion.value || isMobile.value || widthMobile
+  staticLayout.value = (prefersReducedMotion.value || isMobile.value) && !widthMobile
 
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: '.equipos-wrapper',
-      start: 'top top',
-      end: () => `+=${cards.length * window.innerHeight}`,
-      scrub: 1.2,
-      pin: '.equipos-sticky',
-      anticipatePin: 1,
-      onUpdate: (self) => {
-        scrollProgress.value = self.progress
-        activeCard.value = Math.floor(self.progress * cards.length)
-      }
+  ctx = gsap.context(() => {
+    const cards = gsap.utils.toArray('.card-equipo')
+    if (!cards.length) return
+    const imageWrappers = gsap.utils.toArray('.card-image-wrapper')
+    const total = cards.length
+
+    if (skipAnimation) {
+      gsap.set(cards, { yPercent: 0, opacity: 1, rotateZ: 0 })
+      gsap.set('.card-image-wrapper', { y: 0 })
+      return
     }
-  })
 
-  cards.forEach((card, i) => {
-    const imageWrapper = imageElements[i]
+    // Estados iniciales para evitar parpadeo (FOUC) y revertir de forma limpia
+    gsap.set(cards, { yPercent: 100, opacity: 0, rotateZ: 5 })
+    gsap.set('.card-image-wrapper', { y: -30 })
 
-    // Entrada de la tarjeta (desde abajo)
-    tl.fromTo(card,
-      { y: '100%', opacity: 0, rotateZ: 5 },
-      { y: '0%', opacity: 1, rotateZ: 0, duration: 0.8, ease: 'power2.out' },
-      i
-    )
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: '.equipos-wrapper',
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: isLowEnd.value ? 0.4 : 0.8,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          scrollProgress.value = self.progress
+          activeCard.value = Math.floor(self.progress * total)
+        }
+      }
+    })
 
-    // Parallax en la imagen
-    if (imageWrapper) {
-      tl.fromTo(imageWrapper,
-        { y: -30 },
-        { y: 30, duration: 1 },
+    cards.forEach((card, i) => {
+      // Entrada de la tarjeta (desde abajo)
+      tl.to(card,
+        { yPercent: 0, opacity: 1, rotateZ: 0, duration: 0.8, ease: 'power2.out' },
         i
       )
-    }
 
-    // Salida de la tarjeta (hacia arriba como baraja)
-    tl.to(card,
-      { y: '-100%', opacity: 0, rotateZ: -3, duration: 0.6, ease: 'power2.in' },
-      i + 0.8
-    )
-  })
+      // Parallax en la imagen
+      const img = imageWrappers[i]
+      if (img) {
+        tl.to(img, { y: 30, duration: 1, ease: 'none' }, i)
+      }
 
-  // Animación de elementos dentro de cada tarjeta
-  cards.forEach((card, i) => {
-    const tag = card.querySelector('.card-tag')
-    const titulo = card.querySelector('.card-titulo')
-    const detalles = card.querySelectorAll('.detalle-item')
-
-    gsap.fromTo(tag,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.6, ease: 'back.out' },
-      i + 0.2
-    )
-
-    gsap.fromTo(titulo,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.6, ease: 'back.out' },
-      i + 0.3
-    )
-
-    detalles.forEach((detalle, idx) => {
-      gsap.fromTo(detalle,
-        { opacity: 0, x: -20 },
-        { opacity: 1, x: 0, duration: 0.5, ease: 'back.out' },
-        i + 0.4 + (idx * 0.1)
+      // Salida de la tarjeta (hacia arriba como baraja)
+      tl.to(card,
+        { yPercent: -100, opacity: 0, rotateZ: -3, duration: 0.6, ease: 'power2.in' },
+        i + 0.8
       )
+
+      // Elementos internos dentro del timeline (sincronizados con el scroll)
+      const tag = card.querySelector('.card-tag')
+      const titulo = card.querySelector('.card-titulo')
+      const detalles = card.querySelectorAll('.detalle-item')
+
+      gsap.set(tag, { opacity: 0, y: 20 })
+      gsap.set(titulo, { opacity: 0, y: 20 })
+      gsap.set(detalles, { opacity: 0, x: -20 })
+
+      tl.to(tag, { opacity: 1, y: 0, duration: 0.5, ease: 'back.out' }, i + 0.15)
+      tl.to(titulo, { opacity: 1, y: 0, duration: 0.5, ease: 'back.out' }, i + 0.25)
+      detalles.forEach((detalle, idx) => {
+        tl.to(detalle, { opacity: 1, x: 0, duration: 0.4, ease: 'back.out' }, i + 0.35 + (idx * 0.1))
+      })
     })
   })
 })
 
+onUnmounted(() => {
+  ctx?.revert()
+})
 </script>
 
 <template>
-  <section class="equipos-wrapper">
+  <section
+    class="equipos-wrapper"
+    :class="{ 'layout-estatico': staticLayout }"
+  >
     <div class="equipos-sticky md:py-30 py-20">
       <UContainer>
         <div class="section-header mb-12">
-          <h2 class="equipos-titulo">Nuestros Productos</h2>
-          <div class="titulo-accent" style="background: var(--ui-primary)"></div>
+          <h2 class="equipos-titulo">
+            Nuestros Productos
+          </h2>
+          <div
+            class="titulo-accent"
+            style="background: var(--ui-primary)"
+          />
         </div>
 
         <div class="equipos-overflow">
-          <div v-for="(e, i) in equipos" :key="e.id" class="card-equipo"
-            :style="{ '--card-color': e.color, '--card-acento': e.acento }">
-
+          <div
+            v-for="e in equipos"
+            :key="e.id"
+            class="card-equipo"
+            :style="{ '--card-color': e.color, '--card-acento': e.acento }"
+          >
             <!-- Fondo gradiente dinámico -->
-            <div class="card-bg-gradient"></div>
+            <div class="card-bg-gradient" />
 
             <!-- Contenedor izquierdo: Información -->
             <div class="card-content">
               <div class="content-top">
                 <span class="card-tag">{{ e.tag }}</span>
-                <div class="icon-badge" :style="{ backgroundColor: e.color }">
-                  <UIcon :name="e.icon" class="text-white"></UIcon>
+                <div
+                  class="icon-badge"
+                  :style="{ backgroundColor: e.color }"
+                >
+                  <UIcon
+                    :name="e.icon"
+                    class="text-white"
+                  />
                 </div>
               </div>
 
-              <h3 class="card-titulo">{{ e.titulo }}</h3>
+              <h3 class="card-titulo">
+                {{ e.titulo }}
+              </h3>
 
-              <p class="card-descripcion">{{ e.descripcion }}</p>
+              <p class="card-descripcion">
+                {{ e.descripcion }}
+              </p>
 
               <!-- Detalles dinámicos -->
               <div class="detalles-list">
-                <div v-for="(detalle, idx) in e.detalles" :key="idx" class="detalle-item">
-                  <div class="detalle-dot" :style="{ backgroundColor: e.acento }"></div>
+                <div
+                  v-for="(detalle, idx) in e.detalles"
+                  :key="idx"
+                  class="detalle-item"
+                >
+                  <div
+                    class="detalle-dot"
+                    :style="{ backgroundColor: e.acento }"
+                  />
                   <span>{{ detalle }}</span>
                 </div>
               </div>
 
               <!-- CTA Button -->
               <div class="card-cta">
-                <button class="btn-contactar" :style="{ backgroundColor: e.color, borderColor: e.acento }">
+                <a
+                  :href="whatsappProducto(e.titulo)"
+                  target="_blank"
+                  rel="noopener"
+                  class="btn-contactar"
+                  :style="{ backgroundColor: e.color, borderColor: e.acento }"
+                >
                   Contactar
-                  <UIcon name="i-lucide-arrow-right" class="ml-2"></UIcon>
-                </button>
+                  <UIcon
+                    name="i-lucide-arrow-right"
+                    class="ml-2"
+                  />
+                </a>
               </div>
             </div>
 
             <!-- Contenedor derecho: Imagen con parallax -->
             <div class="card-image-container">
               <div class="card-image-wrapper">
-                <div class="image-parallax-layer" :style="{ backgroundImage: `url(${e.imagen})` }"></div>
-                <div class="image-overlay"
-                  :style="{ background: `linear-gradient(135deg, ${e.color}40 0%, ${e.acento}20 100%)` }"></div>
+                <div
+                  class="image-parallax-layer"
+                  :style="{ backgroundImage: `url(${e.imagen})` }"
+                />
+                <div
+                  class="image-overlay"
+                  :style="{ background: `linear-gradient(135deg, ${e.color}40 0%, ${e.acento}20 100%)` }"
+                />
               </div>
 
               <!-- Elementos decorativos -->
-              <div class="decoration-circle" :style="{ backgroundColor: e.color, opacity: 0.1 }"></div>
-              <div class="decoration-line" :style="{ backgroundColor: e.acento }"></div>
+              <div
+                class="decoration-circle md:flex hidden"
+                :style="{ backgroundColor: e.color, opacity: 0.1 }"
+              />
+              <div
+                class="decoration-line"
+                :style="{ backgroundColor: e.acento }"
+              />
             </div>
           </div>
         </div>
@@ -260,13 +326,44 @@ onMounted(() => {
   max-height: 85vh;
 }
 
-@media (max-width: 768px) {
-  .card-equipo {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    padding: 2rem 1.5rem;
-    height: 60%;
-  }
+/*
+|--------------------------------------------------------------------------
+| Diseño estático (reduced-motion / táctil en desktop/tablet)
+|--------------------------------------------------------------------------
+| Cada tarjeta ocupa 100vh en su propia posición, sin animación de baraja.
+*/
+
+.layout-estatico {
+  height: auto;
+}
+
+.layout-estatico .equipos-sticky {
+  position: relative;
+  height: auto;
+  overflow: visible;
+}
+
+.layout-estatico .equipos-overflow {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: stretch;
+}
+
+.layout-estatico .card-equipo {
+  position: static;
+  width: 100%;
+  height: auto;
+  min-height: 100vh;
+  max-height: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 3rem;
+  padding: 3rem 4rem;
+  margin: 0;
 }
 
 .card-bg-gradient {
@@ -305,7 +402,6 @@ onMounted(() => {
   letter-spacing: 0.5px;
   text-transform: uppercase;
   box-shadow: 0 4px 15px var(--card-color, #C9A227)40;
-  animation: fadeInDown 0.6s ease-out 0.2s both;
 }
 
 .icon-badge {
@@ -317,7 +413,6 @@ onMounted(() => {
   justify-content: center;
   background: var(--card-color, #C9A227);
   box-shadow: 0 8px 25px var(--card-color, #C9A227)40;
-  animation: slideInRight 0.6s ease-out 0.3s both;
 }
 
 .icon-badge :deep(i) {
@@ -331,7 +426,6 @@ onMounted(() => {
   color: var(--deep-blue);
   line-height: 1.1;
   letter-spacing: -0.3px;
-  animation: fadeInDown 0.6s ease-out 0.3s both;
   margin: 0.5rem 0;
 }
 
@@ -340,7 +434,6 @@ onMounted(() => {
   color: var(--deep-blue);
   line-height: 1.6;
   opacity: 0.8;
-  animation: fadeInUp 0.6s ease-out 0.4s both;
   margin: 0.5rem 0;
 }
 
@@ -361,19 +454,6 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  animation: fadeInLeft 0.5s ease-out both;
-}
-
-.detalle-item:nth-child(1) {
-  animation-delay: 0.5s;
-}
-
-.detalle-item:nth-child(2) {
-  animation-delay: 0.6s;
-}
-
-.detalle-item:nth-child(3) {
-  animation-delay: 0.7s;
 }
 
 .detalle-dot {
@@ -405,9 +485,9 @@ onMounted(() => {
   font-size: 0.9rem;
   border-radius: 50px;
   cursor: pointer;
+  text-decoration: none;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   box-shadow: 0 8px 25px var(--card-color, #C9A227)40;
-  animation: fadeInUp 0.6s ease-out 0.7s both;
   margin-top: 0.5rem;
 }
 
@@ -436,7 +516,6 @@ onMounted(() => {
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   transform-origin: center;
-  animation: scaleIn 0.8s ease-out;
 }
 
 @keyframes scaleIn {
@@ -576,6 +655,60 @@ onMounted(() => {
 
   .card-image-wrapper {
     min-height: 300px;
+  }
+}
+
+/*
+|--------------------------------------------------------------------------
+| Móvil (<768px): va al final para ganar la cascada sobre los breakpoints
+| mayores. Las tarjetas se apilan en columna y la foto siempre visible.
+|--------------------------------------------------------------------------
+*/
+@media (max-width: 768px) {
+  .equipos-wrapper {
+    height: auto;
+  }
+
+  .equipos-sticky {
+    position: relative;
+    height: auto;
+    overflow: visible;
+  }
+
+  .equipos-overflow {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: stretch;
+  }
+
+  .card-equipo {
+    position: static;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    margin: 0;
+  }
+
+  .card-image-container {
+    order: -1;
+    width: 100%;
+    height: 200px;
+  }
+
+  .card-image-wrapper {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .card-bg-gradient {
+    display: none;
   }
 }
 </style>

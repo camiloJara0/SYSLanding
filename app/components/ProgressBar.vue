@@ -1,6 +1,9 @@
 <template>
   <div class="ecg-wrapper">
-    <canvas ref="ecgCanvas" class="ecg-canvas" />
+    <canvas
+      ref="ecgCanvas"
+      class="ecg-canvas"
+    />
   </div>
 </template>
 
@@ -36,7 +39,7 @@ function draw(prog) {
   const c = ecgCanvas.value
   if (!c || !ctx) return
   const W = c.width, H = c.height
-  const cutoff = prog  // valor entre 0 y 1
+  const cutoff = prog // valor entre 0 y 1
 
   ctx.clearRect(0, 0, W, H)
 
@@ -70,14 +73,19 @@ function draw(prog) {
 // Exponer para que el padre llame draw()
 defineExpose({ draw })
 
+function onResize() {
+  resize()
+  draw(props.progress)
+}
+
 onMounted(() => {
   ctx = ecgCanvas.value.getContext('2d')
   resize()
   draw(0)
-  window.addEventListener('resize', () => { resize(); draw(props.progress) })
+  window.addEventListener('resize', onResize)
 })
 
-onUnmounted(() => window.removeEventListener('resize', resize))
+onUnmounted(() => window.removeEventListener('resize', onResize))
 </script>
 
 <style scoped>

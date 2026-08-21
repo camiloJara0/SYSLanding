@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sys-medical.com/sitemap.xml

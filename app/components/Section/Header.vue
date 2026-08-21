@@ -1,205 +1,462 @@
 <script setup>
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { onMounted, onUnmounted, ref } from 'vue'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { onMounted, onUnmounted, ref, computed } from 'vue'
 
-gsap.registerPlugin(ScrollTrigger);
-const totalImagenes = 98
+gsap.registerPlugin(ScrollTrigger)
+
+const { isLowEnd, isMobile, prefersReducedMotion, supportsHeavyAnimations } = useDeviceCapabilities()
+
+useHead({
+  link: [
+    { rel: 'preload', as: 'image', href: '/header.jpg', fetchpriority: 'high' }
+  ]
+})
+
+const { crearEnlace } = useWhatsApp()
+const whatsappUrl = crearEnlace()
+
+const TOTAL_IMAGENES = 98
 const imagenActual = ref(1)
-const imagenesPrecargadas = []
 
-// Precarga de imágenes
-const precargarImagenes = () => {
-  for (let i = 1; i <= totalImagenes; i++) {
-    const frame = String(i).padStart(3, '0')
-    const img = new Image()
-    img.src = `/images/rural/ezgif-frame-${frame}.jpg`
-    imagenesPrecargadas.push(img)
+const heroRef = ref(null)
+const heroVisualRef = ref(null)
+const ambulanciaStageRef = ref(null)
+const ambulanciaStickyRef = ref(null)
+
+const frameStep = computed(() => {
+  if (prefersReducedMotion.value || isLowEnd.value) return 8
+  if (isMobile.value) return 3
+  return 1
+})
+
+/**
+ * Modo superposición (solo desktop heavy): el hero queda por encima
+ * del escenario de la ambulancia y se despliega hacia arriba al hacer
+ * scroll. En mobile el escenario mantiene su flujo normal.
+ *
+ * Arranca en `false` para que el SSR renderice el HTML sin el overlay
+ * (evita el margin-top negativo horneado en móvil) y se activa en
+ * `onMounted` solo en desktop.
+ */
+const overlapMode = ref(false)
+
+/**
+ * Curva de "llegada rápida": al entrar a la sección de la ambulancia,
+ * los frames avanzan rápido al inicio (la ambulancia llega a toda velocidad)
+ * y frenan progresivamente a medida que el scroll avanza.
+ */
+const curvaLlegada = gsap.parseEase('power2.out')
+
+const framesPrecargados = new Set()
+
+function precargarFrames(desde, hasta) {
+  const idle = window.requestIdleCallback
+    ? window.requestIdleCallback.bind(window)
+    : cb => setTimeout(cb, 1)
+  for (let i = desde; i <= hasta; i += frameStep.value) {
+    if (framesPrecargados.has(i)) continue
+    framesPrecargados.add(i)
+    idle(() => {
+      const frame = String(i).padStart(3, '0')
+      const img = new Image()
+      img.src = `/images/rural/ezgif-frame-${frame}.webp`
+    })
   }
 }
 
-// Actualiza frame según scroll
-const actualizarImagen = () => {
-  const scrollTop = window.scrollY
-  const header = document.querySelector("header")
-  const maxScroll = header.offsetHeight - window.innerHeight
-  const progreso = scrollTop / maxScroll
-  const frame = Math.min(
-    totalImagenes,
-    Math.max(1, Math.floor(progreso * totalImagenes))
-  )
-  imagenActual.value = frame
+function frameDesdeProgreso(progreso) {
+  const f = Math.min(TOTAL_IMAGENES, Math.max(1, Math.floor(progreso * TOTAL_IMAGENES) + 1))
+  if (frameStep.value > 1) {
+    const redondeado = Math.round(f / frameStep.value) * frameStep.value
+    return Math.min(TOTAL_IMAGENES, Math.max(1, redondeado))
+  }
+  return f
 }
 
+let triggers = []
+
 onMounted(() => {
-  precargarImagenes()
-  window.addEventListener('scroll', actualizarImagen, { passive: true })
+  // Precarga inicial ligera (solo los primeros frames para arrancar)
+  precargarFrames(1, Math.min(12 * frameStep.value, TOTAL_IMAGENES))
 
-  gsap.from(".informacion-inicial", {
-    y: -50,        // empieza 100px arriba
-    opacity: 0,     // invisible al inicio
-    duration: 1.2,  // duración de la animación
-    ease: "power3.out" // curva de aceleración suave
-  });
+  overlapMode.value = supportsHeavyAnimations.value && !isMobile.value
 
-  // Animación inicial del nombre de la empresa
-  gsap.from(".informacion-inicial h3", {
-    y: -80,
-    opacity: 0,
-    duration: 1.2,
-    ease: "power3.out"
-  });
+  // Animación de entrada del hero
+  const heroTl = gsap.timeline({ delay: 0.15 })
+  heroTl
+    .from('.hero-badge', { y: -20, opacity: 1, duration: 0.8, ease: 'power3.out' })
+    // .from('. text-2xl', { y: 40, opacity: 1, duration: 1, ease: 'power3.out' }, '-=0.5')
+    .from('.hero-subtitle', { y: 30, opacity: 1, duration: 0.9, ease: 'power3.out' }, '-=0.6')
+    .from('.hero-features > *', { y: 20, opacity: 1, duration: 0.6, stagger: 0.1, ease: 'power2.out' }, '-=0.5')
+    .from('.hero-cta > *', { y: 20, opacity: 1, duration: 0.6, stagger: 0.12, ease: 'power2.out' }, '-=0.4')
+    .from('.scroll-indicator', { opacity: 1, duration: 0.6 }, '-=0.2')
 
-  // Animación de subtítulo y botón en el primer bloque
-  gsap.from(".informacion-inicial p, .informacion-inicial button", {
-    y: 40,
-    opacity: 0,
-    duration: 1,
-    delay: 0.5,
-    ease: "power2.out"
-  });
+  // Transición cinematográfica del hero visual al hacer scroll
+  const stage = ambulanciaStageRef.value
+  const sticky = ambulanciaStickyRef.value
 
-  // Animación del segundo bloque con scroll
-  gsap.from(".ambulancia", {
-    y: 100,
-    opacity: 0,
-    duration: 1,
-    ease: "power1.out",
-    scrollTrigger: {
-      trigger: ".ambulancia",
-      start: "top 80%",
-      toggleActions: "play none none reverse"
+  if (supportsHeavyAnimations.value) {
+    if (overlapMode.value) {
+      // El hero entero se eleva (yPercent -100) en los primeros 100vh,
+      // acelerando con power2.in. El stage está tirado debajo
+      // (margin-top: -100vh), de modo que la secuencia de frames de la
+      // ambulancia arranca desde el scroll 0, apenas el hero se despliega.
+      const stHero = gsap.to('.hero-visual', {
+        yPercent: -100,
+        ease: 'power2.in',
+        scrollTrigger: {
+          trigger: stage,
+          start: 'top top',
+          end: '+=100vh',
+          scrub: 1
+        }
+      })
+      triggers.push(stHero)
+    } else {
+      // Salida rápida hacia arriba: el hero "sale volando" y acelera
+      // justo antes de ceder paso a la sección de la ambulancia.
+      const stHero = gsap.to('.hero-visual-layer', {
+        opacity: 0,
+        scale: 1.2,
+        yPercent: -25,
+        filter: 'blur(16px)',
+        ease: 'power2.in',
+        scrollTrigger: {
+          trigger: heroRef.value,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1
+        }
+      })
+      triggers.push(stHero)
     }
-  });
 
+    const stIndicator = gsap.to('.scroll-indicator', {
+      opacity: 0,
+      y: 20,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: heroRef.value,
+        start: 'top top',
+        end: '30% top',
+        scrub: true
+      }
+    })
+    triggers.push(stIndicator)
+  }
+
+  // Lazy-load del resto de frames cuando el bloque ambulancia se acerca
+  const obs = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          precargarFrames(1, TOTAL_IMAGENES)
+          obs.disconnect()
+        }
+      })
+    },
+    { rootMargin: '300px' }
+  )
+  if (ambulanciaStageRef.value) obs.observe(ambulanciaStageRef.value)
+
+  if (supportsHeavyAnimations.value && stage && sticky) {
+    // Animación de frames sincronizada con scroll (reemplaza listener nativo)
+    const stFrames = gsap.timeline({
+      scrollTrigger: {
+        trigger: stage,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1,
+        onUpdate: (self) => {
+          imagenActual.value = frameDesdeProgreso(curvaLlegada(self.progress))
+        },
+        onLeave: () => { imagenActual.value = TOTAL_IMAGENES },
+        onLeaveBack: () => { imagenActual.value = 1 }
+      }
+    })
+    triggers.push(stFrames)
+
+    // Card de ambulancia: aparece casi al último cuarto de la animación
+    // de frames, tomando el rango real del scrollTrigger de los frames.
+    const framesST = stFrames.scrollTrigger
+    const cardStart = framesST.start + (framesST.end - framesST.start) * 0.72
+    const cardEnd = framesST.start + (framesST.end - framesST.start) * 0.95
+
+    const stCard = gsap.from('.ambulancia-card', {
+      y: 130,
+      x: 60,
+      opacity: 0,
+      duration: 1.1,
+      ease: 'power4.out',
+      scrollTrigger: {
+        trigger: stage,
+        start: cardStart,
+        end: cardEnd,
+        toggleActions: 'play none none reverse'
+      }
+    })
+    triggers.push(stCard)
+  } else {
+    // Modo reducido: frame fijo a la mitad de la secuencia
+    imagenActual.value = frameDesdeProgreso(0.5)
+  }
+
+  ScrollTrigger.refresh()
 })
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', actualizarImagen)
+  triggers.forEach((t) => {
+    t.scrollTrigger?.kill()
+    t.kill()
+  })
+  triggers = []
 })
 </script>
 
 <template>
-  <header class="h-[220dvh] relative overflow-hidden">
-    <div class="fixed inset-0">
-      <img class="imagenAnimada object-[30%_center]"
-        :src="`/images/rural/ezgif-frame-${String(imagenActual).padStart(3, '0')}.jpg`" alt="Animación scroll" />
-      <div class="absolute inset-0 "></div>
-    </div>
+  <header
+    class="header-wrap relative"
+    :class="{ 'overlap-mode': overlapMode }"
+  >
+    <!-- ====== HERO VISUAL 100vh ====== -->
+    <section
+      ref="heroRef"
+      class="hero-visual h-screen relative overflow-hidden"
+    >
+      <!-- Capa imagen (la que se anima al hacer scroll) -->
+      <div
+        ref="heroVisualRef"
+        class="hero-visual-layer absolute inset-0"
+      >
+        <img
+          src="/header.jpg"
+          alt="Equipos médicos de tecnología avanzada para hospitales y centros de salud"
+          class="w-full h-full object-cover"
+          fetchpriority="high"
+          width="1920"
+          height="1080"
+        >
+        <!-- Overlay para legibilidad del texto -->
+        <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/45 to-black/15" />
+        <div class="absolute inset-0 bg-linear-to-r from-black/40 to-transparent" />
+      </div>
 
-    <!-- Bloque inicial -->
-    <UContainer class="h-screen">
-      <div class="grid grid-cols-12 grid-rows-12 contenido">
-        <div
-          class="informacion-inicial hero-card relative overflow-hidden md:col-span-6 col-span-10 lg:col-start-1 col-start-2 md:row-start-2 row-start-2 row-span-4 rounded-3xl md:p-8 md:py-12 p-5 hover:bg-white/25 transition-all duration-300">
-            <h3 class="text-2xl font-bold mb-2 flex items-center">
-              <span class="bg-linear-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">SYS</span>
-              <span class="text-blue-800">S.A.S.</span>
-            </h3>
-          <h3 class="md:text-3xl! text-base text-gray-700/95 mt-3 md:my-4 leading-relaxed drop-shadow font-medium ">
-            <strong class="text-black">Respuesta rápida,</strong> <br>
-            cuidado humano.
-          </h3>
-          <p class="md:text-lg text-base text-gray-700/95 mt-3 md:mt-4 leading-relaxed drop-shadow font-medium">
-            <strong class="text-black">Ambulancias cértificadas,</strong> perosnal ceritificado y equipos
-            <strong class="text-black">de ultima generación para cada</strong> emergencia.
+      <!-- Contenido del hero -->
+      <UContainer class="relative z-10 h-full flex items-center">
+        <div class="max-w-2xl">
+          <div class="brand-sys text-xl font-bold mb-2 flex items-center opacity-80">
+            <span class="bg-linear-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">SYS</span>
+            <span class="text-gray-300 ml-1.5">S.A.S.</span>
+          </div>
+
+          <h1
+            class=" text-white font-extrabold leading-[1.05] mb-6"
+            style="font-size: 28px; letter-spacing: -0.02em;"
+          >
+            Respuesta rápida,<br>
+            <span class="text-(--light-blue)">cuidado humano</span>.
+          </h1>
+
+          <p class="hero-subtitle text-white/85 text-sm! sm:text-xl max-w-xl mb-8 leading-relaxed">
+            Ambulancias certificadas, personal certificado y equipos de última generación para cada emergencia.
           </p>
-          <div class="flex md:flex-row flex-col gap-3 py-5 px-10">
-            <div class="flex gap-1 items-center justify-center">
-              <UIcon name="i-lucide-shield" size="2xl" class="md:text-5xl text-2xl"></UIcon>
-              <p class="text-xs! font-bold">Seguridad certificada</p>
+
+          <div class="hero-features flex flex-wrap gap-6 mb-10">
+            <div class="flex items-center gap-2 text-white/90">
+              <UIcon
+                name="i-lucide-shield-check"
+                class="md:text-2xl text-xl text-emerald-300"
+              />
+              <span class="md:text-sm! text-xs! font-semibold">Seguridad certificada</span>
             </div>
-            <div class="h-full w-1 bg-gray-400"></div>
-            <div class="flex gap-1 items-center justify-center">
-              <UIcon name="i-lucide-user" size="xl" class="md:text-5xl text-2xl"></UIcon>
-              <p class="text-xs! font-bold">Profesionales especializados</p>
+            <div class="flex items-center gap-2 text-white/90">
+              <UIcon
+                name="i-lucide-user-check"
+                class="md:text-2xl text-xl text-emerald-300"
+              />
+              <span class="md:text-sm! text-xs! font-semibold">Profesionales especializados</span>
             </div>
-            <div class="h-full w-1 bg-gray-200"></div>
-            <div class="flex gap-1 items-center justify-center">
-              <UIcon name="i-lucide-clock" size="xl" class="md:text-5xl text-2xl"></UIcon>
-              <p class="text-xs! font-bold">Disponibilidad 24/7</p>
+            <div class="flex items-center gap-2 text-white/90">
+              <UIcon
+                name="i-lucide-clock"
+                class="md:text-2xl text-xl text-emerald-300"
+              />
+              <span class="md:text-sm! text-xs! font-semibold">Disponibilidad 24/7</span>
             </div>
           </div>
 
-          <div class="flex gap-3 py-4">
-            <UButton color="secondary" class="py-3 md:px-8 rounded-2xl text-white">Contactar</UButton>
-            <UButton to="/#section-servicios" color="neutral" variant="soft" class="py-3 md:px-8 rounded-2xl">Ver Servicios</UButton>
+          <div class="hero-cta flex flex-wrap gap-3">
+            <UButton
+              :to="whatsappUrl"
+              target="_blank"
+              rel="noopener"
+              size="xl"
+              class="rounded-full md:px-8 px-5 text-white font-semibold shadow-lg"
+              :style="{ backgroundColor: 'var(--gold)', borderColor: 'var(--gold)' }"
+            >
+              Contactar
+            </UButton>
+            <UButton
+              to="/#section-servicios"
+              size="xl"
+              variant="outline"
+              color="neutral"
+              class="rounded-full md:px-8 px-5 text-default border-white/40 hover:bg-white/10 font-semibold"
+            >
+              Ver servicios
+            </UButton>
           </div>
         </div>
+      </UContainer>
 
-        <!-- <div
-          class="informacion-inicial md:col-span-4 col-span-10 md:col-start-9 col-start-2 md:row-start-4 row-start-8 row-span-2 bg-white/15 md:bg-white/20 rounded-2xl backdrop-blur-xl border border-white/30 shadow-lg md:p-8 md:py-10 p-5 hover:bg-white/25 transition-all duration-300">
-          <h4 class="md:text-3xl text-2xl font-bold text-black drop-shadow-lg">Tu salud, nuestra prioridad</h4>
-          <UButton to="#section-servicios" color="secondary" variant="solid" size="xl" icon="i-lucide-stethoscope"
-            class="mt-4 md:mt-6 text-white font-semibold shadow-md hover:shadow-lg transition-shadow">Ver Servicios
-          </UButton>
-        </div> -->
+      <!-- Indicador de scroll -->
+      <div class="scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-white/70">
+        <span class="text-xs uppercase tracking-widest">Scroll</span>
+        <UIcon
+          name="i-lucide-chevron-down"
+          class="text-2xl animate-bounce"
+        />
       </div>
-    </UContainer>
+    </section>
 
-    <!-- Bloque ambulancia -->
-    <UContainer class="h-screen">
-      <div class="grid grid-cols-12 grid-rows-12 contendio">
-        <div
-          class="ambulancia md:col-span-6 col-span-10 md:col-start-7 col-start-2 row-start-4 row-span-4 hero-card rounded-2xl md:p-8 md:py-10 p-5 hover:bg-white/25 transition-all duration-300">
-          <h3 class="md:text-4xl text-2xl font-bold py-2 md:py-3 text-white drop-shadow-lg flex items-center gap-3">
-            Servicio de Ambulancia <UIcon name="i-lucide-car"></UIcon>
-          </h3>
-          <p class="md:text-lg text-base text-gray-800/95 mt-3 md:mt-4 leading-relaxed font-medium drop-shadow">
+    <!-- ====== ESCENARIO AMBULANCIA (contenido, no fixed global) ====== -->
+    <section
+      ref="ambulanciaStageRef"
+      class="ambulancia-stage"
+    >
+      <div
+        ref="ambulanciaStickyRef"
+        class="ambulancia-sticky"
+      >
+        <!-- Frame sequence -->
+        <img
+          class="ambulancia-frame object-[30%_center]"
+          :src="`/images/rural/ezgif-frame-${String(imagenActual).padStart(3, '0')}.webp`"
+          :alt="`Secuencia animada de ambulancia en recorrido rural, frame ${imagenActual}`"
+          width="1920"
+          height="1080"
+        >
+        <!-- Overlay para legibilidad -->
+        <div class="absolute inset-0 bg-linear-to-r from-black/45 via-black/15 to-transparent" />
+      </div>
+      <!-- Card de ambulancia -->
+      <UContainer class="absolute top-100 z-10 h-full flex items-center">
+        <div class="ambulancia-card max-w-lg ml-auto bg-white/10 backdrop-blur-xl border border-white/25 rounded-3xl p-8 md:p-10 shadow-2xl">
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 flex items-center gap-3 drop-shadow-lg">
+            Servicio de Ambulancia
+            <UIcon
+              name="i-lucide-ambulance"
+              class="text-3xl text-amber-300"
+            />
+          </h2>
+          <p class="text-secundary text-lg leading-relaxed font-semibold mb-6">
             Atención rápida y segura, con personal capacitado y unidades modernas para emergencias y traslados.
           </p>
-          <UButton to="#" color="secondary" variant="solid" size="xl" icon="i-lucide-phone"
-            class="mt-4 md:mt-6 text-white font-semibold shadow-md hover:shadow-lg transition-shadow">Contactar
+          <UButton
+            to="/#section-servicios"
+            size="xl"
+            class="rounded-full px-8 text-white font-semibold shadow-lg"
+            :style="{ backgroundColor: 'var(--deep-blue)', borderColor: 'var(--deep-blue)' }"
+          >
+            <UIcon
+              name="i-lucide-phone"
+              class="mr-2"
+            />
+            Contactar
           </UButton>
         </div>
-      </div>
-    </UContainer>
-    <div class="absolute bottom-0 left-0 w-full h-50 bg-linear-to-b from-transparent to-(--bg-color)"></div>
+      </UContainer>
+    </section>
+
+    <!-- Gradiente de cierre hacia el fondo de la página -->
+    <div class="absolute bottom-0 left-0 w-full h-50 bg-linear-to-b from-transparent to-(--bg-color)" />
   </header>
 </template>
 
 <style scoped>
-.imagenHeader {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  z-index: 1;
+.header-wrap {
+  position: relative;
+  background: var(--bg-color);
 }
 
-.imagenAnimada {
+.hero-visual-layer {
+  will-change: transform, opacity, filter;
+  transform-origin: center;
+}
+
+.hero-visual-layer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Escenario ambulancia: altura que provee scroll suficiente para 98 frames */
+.ambulancia-stage {
+  position: relative;
+  height: 300vh;
+  background: #000;
+}
+
+.ambulancia-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.ambulancia-frame {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   will-change: transform;
-  /* optimización */
 }
 
-.contenido {
+.hero-fade-out {
   position: relative;
+  height: 80px;
+  margin-top: -1px;
+  background: linear-gradient(to bottom, #fff, var(--bg-color));
+  z-index: 2;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Modo superposición (desktop)
+|--------------------------------------------------------------------------
+*/
+
+.overlap-mode .hero-visual {
+  position: relative;
+  z-index: 2;
+  will-change: transform;
+}
+
+.overlap-mode .ambulancia-stage {
+  margin-top: -100vh;
   z-index: 1;
-  /* para que el texto quede encima de la imagen */
 }
 
-.hero-card {
-  position: relative;
+@media (max-width: 768px) {
+  .ambulancia-stage {
+    height: 180vh;
+  }
+
+  .ambulancia-card {
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
 }
 
-.hero-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+@media (prefers-reduced-motion: reduce) {
+  .hero-visual-layer {
+    will-change: auto;
+  }
 
-  background: radial-gradient(
-    ellipse at center,
-    rgba(255,255,255,0.9) 0%,
-    rgba(255,255,255,0.75) 35%,
-    rgba(255,255,255,0.3) 60%,
-    rgba(255,255,255,0.05) 80%,
-    transparent 100%
-  );
-
-  z-index: -1;
+  .ambulancia-frame {
+    will-change: auto;
+  }
 }
 </style>

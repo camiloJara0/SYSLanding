@@ -1,15 +1,19 @@
 <template>
   <Navbar />
 
-  <SectionHeader id="section-header" />
+  <main>
+    <SectionHeader id="section-header" />
 
-  <SectionServicios id="section-servicios" />
+    <SectionServicios id="section-servicios" />
 
-  <SectionProductos id="section-productos"/>
-  
-  <SectionCatalogo id="section-catalogo" />
+    <SectionProductos id="section-productos" />
 
-  <SectionSobreNosotros id="section-sobre-nosotros" />
-  
+    <SectionCatalogo id="section-catalogo" />
+
+    <SectionSobreNosotros id="section-sobre-nosotros" />
+
+    <SectionUbicacion id="section-ubicacion" />
+  </main>
+
   <Footer />
 </template>
