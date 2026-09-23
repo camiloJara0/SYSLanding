@@ -91,10 +91,12 @@ onUnmounted(() => {
           </p>
         </div>
         <h2 class="text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
-          Aire inteligente para <span class="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">espacios que inspiran</span>
+          Soluciones integrales para un <span class="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">sector salud más eficiente</span>
         </h2>
         <p class="text-xl text-gray-600 max-w-3xl mx-auto lg:mx-0">
-          Soluciones integrales de ventilación mecánica que transforman la calidad del aire, la eficiencia energética y el confort de los espacios.
+          Integramos tecnología biomédica, suministro de medicamentos e insumos,
+          transporte asistencial y talento humano especializado para brindar
+          soluciones confiables, seguras y oportunas a las instituciones de salud.
         </p>
       </div>
 
@@ -134,7 +136,7 @@ onUnmounted(() => {
         <div class="relative">
           <div class="absolute inset-0 bg-linear-to-r from-blue-600/20 to-cyan-500/20 rounded-3xl blur-2xl" />
           <img
-            src="/images/products/ambulancia_por_dentro.jpeg"
+            src="/images/FOTO 4.jpeg"
             alt="SYS Soluciones médicas y de emergencia"
             loading="lazy"
             decoding="async"

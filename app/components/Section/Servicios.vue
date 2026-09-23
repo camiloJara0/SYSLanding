@@ -13,6 +13,8 @@ gsap.registerPlugin(ScrollTrigger)
 const { isMobile, isTouch, supportsHeavyAnimations } = useDeviceCapabilities()
 
 const progress = ref(0)
+const nativeProgress = ref(0)
+const isSliderDragging = ref(false)
 const showHint = ref(true)
 
 const ecgRef = ref(null)
@@ -36,7 +38,7 @@ const servicios = [
     tag: 'Ambulancia',
     color: '#0D9488',
     acento: '#14B8A6',
-    imagen: '/images/services/ambulancia.webp',
+    imagen: '/images/FOTO 1.jpeg',
     alt: 'Ambulancia de traslado básico de SYS S.A.S. con monitoreo continuo de pacientes',
     icon: 'i-lucide-activity',
     mensajePredeterminado:
@@ -49,7 +51,7 @@ const servicios = [
     tag: 'Urgente',
     color: '#F97316',
     acento: '#FB923C',
-    imagen: '/images/services/emergencias.webp',
+    imagen: '/images/FOTO 3.jpeg',
     alt: 'Unidad de emergencias 24/7 con soporte vital avanzado de SYS S.A.S.',
     icon: 'i-lucide-siren',
     mensajePredeterminado:
@@ -306,6 +308,10 @@ function recalc() {
       wrapperRef.value.style.height = ''
     }
 
+    nextTick(() => {
+      updateNativeProgress()
+    })
+
     ScrollTrigger.refresh()
     return
   }
@@ -318,13 +324,66 @@ function recalc() {
 }
 
 /**
+ * En modo nativo, sincroniza la barra deslizadora con el scroll real.
+ */
+function updateNativeProgress() {
+  const el = overflowRef.value
+  if (!el) return
+  const max = el.scrollWidth - el.clientWidth
+  nativeProgress.value = max > 0 ? el.scrollLeft / max : 0
+}
+
+/**
  * En modo nativo oculta el hint al deslizar las tarjetas.
  */
 function onOverflowScroll() {
   const el = overflowRef.value
   if (!el) return
-
   showHint.value = el.scrollLeft < 2
+  updateNativeProgress()
+}
+
+/**
+ * Drag de la barra deslizadora móvil.
+ */
+const sliderTrackEl = ref(null)
+
+function onSliderDown(e) {
+  if (!overflowRef.value) return
+  isSliderDragging.value = true
+  sliderTrackEl.value = e.currentTarget?.querySelector?.('.mobile-slider-track') || e.target?.closest?.('.mobile-slider-track')
+  document.body.style.userSelect = 'none'
+  document.addEventListener('mousemove', onSliderMove)
+  document.addEventListener('mouseup', onSliderUp)
+  document.addEventListener('touchmove', onSliderMove, { passive: false })
+  document.addEventListener('touchend', onSliderUp)
+}
+
+function onSliderMove(e) {
+  if (!isSliderDragging.value || !overflowRef.value || !sliderTrackEl.value) return
+  const rect = sliderTrackEl.value.getBoundingClientRect()
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX
+  const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+  const maxScroll = overflowRef.value.scrollWidth - overflowRef.value.clientWidth
+  overflowRef.value.scrollLeft = ratio * maxScroll
+}
+
+function onSliderUp() {
+  isSliderDragging.value = false
+  sliderTrackEl.value = null
+  document.body.style.userSelect = ''
+  document.removeEventListener('mousemove', onSliderMove)
+  document.removeEventListener('mouseup', onSliderUp)
+  document.removeEventListener('touchmove', onSliderMove)
+  document.removeEventListener('touchend', onSliderUp)
+}
+
+function onTrackClick(e) {
+  if (!overflowRef.value) return
+  const rect = e.currentTarget.getBoundingClientRect()
+  const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+  const maxScroll = overflowRef.value.scrollWidth - overflowRef.value.clientWidth
+  overflowRef.value.scrollTo({ left: ratio * maxScroll, behavior: 'smooth' })
 }
 
 onMounted(async () => {
@@ -499,6 +558,11 @@ onUnmounted(() => {
     'visibilitychange',
     visibilityHandler
   )
+
+  document.removeEventListener('mousemove', onSliderMove)
+  document.removeEventListener('mouseup', onSliderUp)
+  document.removeEventListener('touchmove', onSliderMove)
+  document.removeEventListener('touchend', onSliderUp)
 })
 </script>
 
@@ -520,11 +584,6 @@ onUnmounted(() => {
               Nuestros servicios
             </h2>
           </div>
-
-          <!-- <ProgressBar
-            ref="ecgRef"
-            :progress="progress"
-          /> -->
         </div>
 
         <!-- HINT -->
@@ -665,30 +724,26 @@ onUnmounted(() => {
 
         <div
           v-else
+          class="mobile-slider"
+          @touchstart.passive="onSliderDown"
+          @mousedown="onSliderDown"
         >
-          <Transition name="fade">
+          <div
+            class="mobile-slider-track"
+            @click="onTrackClick"
+          >
             <div
-              v-if="!useHorizontalPin"
-              class="horizontal-navigation-info"
-            >
-              <span>
-                Explora nuestros servicios
-              </span>
-            </div>
-          </Transition>
-        </div>
-
-        <!-- INDICADOR -->
-        <div
-          v-if="useHorizontalPin"
-          class="horizontal-navigation-info"
-        >
-          <span>
-            {{ Math.round(progress * 100) }}%
-          </span>
-
-          <span>
-            Explora nuestros servicios
+              class="mobile-slider-fill"
+              :style="{ width: `${nativeProgress * 100}%` }"
+            />
+            <div
+              class="mobile-slider-thumb"
+              :class="{ 'is-dragging': isSliderDragging }"
+              :style="{ left: `${nativeProgress * 100}%` }"
+            />
+          </div>
+          <span class="mobile-slider-label">
+            {{ Math.round(nativeProgress * 100) }}%
           </span>
         </div>
       </UContainer>
@@ -726,9 +781,7 @@ onUnmounted(() => {
   width: max-content;
   gap: 1.5rem;
   padding-right: clamp(1.5rem, 4vw, 3rem);
-
   will-change: transform;
-
   cursor: grab;
 }
 
@@ -739,15 +792,11 @@ onUnmounted(() => {
 .card-servicio {
   flex: 0 0 clamp(320px, 32vw, 460px);
   overflow: hidden;
-
   border-radius: 1.5rem;
-
   background: white;
-
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.06),
     0 2px 8px rgba(0, 0, 0, 0.04);
-
   user-select: none;
 }
 
@@ -761,9 +810,7 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-
   pointer-events: none;
-
   transition:
     transform 0.6s ease;
 }
@@ -775,7 +822,6 @@ onUnmounted(() => {
 .card-imagen-overlay {
   position: absolute;
   inset: 0;
-
   background:
     linear-gradient(to top,
       rgba(0, 0, 0, 0.45),
@@ -786,21 +832,14 @@ onUnmounted(() => {
   position: absolute;
   left: 1rem;
   top: 1rem;
-
   display: inline-flex;
   align-items: center;
-
   padding: 0.5rem 0.75rem;
-
   border-radius: 999px;
-
   color: white;
-
   background: var(--card-color);
-
   font-size: 0.75rem;
   font-weight: 600;
-
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -811,18 +850,14 @@ onUnmounted(() => {
 
 .card-titulo {
   margin-bottom: 0.75rem;
-
   color: #111827;
-
   font-size: 1.35rem;
   font-weight: 700;
 }
 
 .card-descripcion {
   min-height: 72px;
-
   color: #6b7280;
-
   font-size: 0.95rem;
   line-height: 1.6;
 }
@@ -831,22 +866,14 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   margin-top: 1.5rem;
-
   width: 100%;
-
   padding: 0;
-
   background: none;
   border: none;
-
   color: var(--card-color);
-
   font-weight: 600;
-
   cursor: pointer;
-
   text-align: left;
 }
 
@@ -867,11 +894,8 @@ onUnmounted(() => {
 .horizontal-navigation {
   display: flex;
   align-items: center;
-
   gap: 0.75rem;
-
   width: 100%;
-
   margin-top: 2rem;
 }
 
@@ -879,22 +903,14 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex: 0 0 auto;
-
   width: 38px;
   height: 38px;
-
   border: 1px solid rgba(0, 0, 0, 0.08);
-
   border-radius: 50%;
-
   background: white;
-
   color: #374151;
-
   cursor: pointer;
-
   transition:
     transform 0.2s ease,
     background 0.2s ease,
@@ -903,41 +919,28 @@ onUnmounted(() => {
 
 .horizontal-navigation-button:hover {
   transform: translateY(-1px);
-
   background: #f9fafb;
-
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .horizontal-scrollbar {
   position: relative;
-
   flex: 1;
-
   height: 8px;
-
   border-radius: 999px;
-
   background: #e5e7eb;
-
   cursor: pointer;
 }
 
 .horizontal-scrollbar-thumb {
   position: absolute;
   top: 0;
-
   height: 100%;
-
   min-width: 40px;
-
   border-radius: inherit;
-
   background: #2563eb;
-
   cursor: grab;
-
   transition:
     background 0.2s ease,
     transform 0.15s ease;
@@ -949,23 +952,17 @@ onUnmounted(() => {
 
 .horizontal-scrollbar-thumb.dragging {
   cursor: grabbing;
-
   transform: scaleY(1.5);
 }
 
 .horizontal-scrollbar-thumb span {
   position: absolute;
-
   top: 50%;
   left: 50%;
-
   width: 32px;
   height: 3px;
-
   border-radius: 999px;
-
   background: rgba(255, 255, 255, 0.7);
-
   transform: translate(-50%, -50%);
 }
 
@@ -973,19 +970,14 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: 0.75rem;
-
   margin-top: 0.75rem;
-
   color: #9ca3af;
-
   font-size: 0.75rem;
 }
 
 .horizontal-navigation-info span:first-child {
   color: #2563eb;
-
   font-weight: 700;
 }
 
@@ -999,13 +991,9 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: 0.6rem;
-
   margin-bottom: 1rem;
-
   color: #6b7280;
-
   font-size: 0.85rem;
 }
 
@@ -1034,11 +1022,8 @@ onUnmounted(() => {
 .native-scroll {
   overflow-x: auto !important;
   overflow-y: hidden !important;
-
   scroll-snap-type: x proximity;
-
   -webkit-overflow-scrolling: touch;
-
   touch-action: pan-x;
 }
 
@@ -1066,6 +1051,69 @@ onUnmounted(() => {
   padding-bottom: 0.5rem;
 }
 
+/*
+|--------------------------------------------------------------------------
+| Slider de progreso móvil
+|--------------------------------------------------------------------------
+*/
+
+.mobile-slider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  touch-action: none;
+}
+
+.mobile-slider-track {
+  position: relative;
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.mobile-slider-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #0D9488, #2563EB, #C9A227);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.mobile-slider-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #2563EB;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  transition: box-shadow 0.15s ease;
+  z-index: 2;
+}
+
+.mobile-slider-thumb.is-dragging {
+  cursor: grabbing;
+  box-shadow: 0 2px 14px rgba(37, 99, 235, 0.6);
+}
+
+.mobile-slider-label {
+  flex: 0 0 auto;
+  min-width: 2.5rem;
+  color: #2563EB;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: right;
+}
+
 @media (max-width: 768px) {
   .carrusel-header {
     flex-direction: column;
@@ -1082,7 +1130,6 @@ onUnmounted(() => {
 
   .native-scroll {
     width: min(100%, 480px);
-
     margin-inline: auto;
   }
 
@@ -1095,252 +1142,3 @@ onUnmounted(() => {
   }
 }
 </style>
-
-<!-- <style scoped>
-.carrusel-wrapper {
-  width: 100%;
-  position: relative;
-  background: var(--bg-color);
-}
-
-.carrusel-sticky {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  background: var(--bg-color);
-  z-index: 10;
-}
-
-.carrusel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  margin-bottom: 1.5rem;
-}
-
-.section-eyebrow {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--light-blue);
-  margin-bottom: 0.25rem;
-}
-
-.scroll-hint {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--deep-blue);
-  opacity: 0.75;
-  margin-bottom: 1rem;
-}
-
-.hint-arrow {
-  animation: hintNudge 1.4s ease-in-out infinite;
-}
-
-@keyframes hintNudge {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(6px); }
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.4s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
-
-.carrusel-overflow {
-  overflow: hidden;
-}
-
-.carrusel-overflow.native-scroll {
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-}
-
-.carrusel-overflow.native-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.cards-track {
-  display: flex;
-  gap: 1.5rem;
-  width: max-content;
-  padding: 1rem;
-  padding-top: 0;
-  will-change: transform;
-}
-
-.cards-track.native-track {
-  width: 100%;
-  scroll-padding-left: 1rem;
-}
-
-.card-servicio {
-  flex-shrink: 0;
-  width: clamp(280px, 38vw, 540px);
-  background: #fff;
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: var(--shadow-md);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1), box-shadow 0.4s ease;
-  display: flex;
-  flex-direction: column;
-  scroll-snap-align: start;
-}
-
-.cards-track:not(.native-track) .card-servicio {
-  height: 62vh;
-}
-
-.cards-track.native-track .card-servicio {
-  height: 480px;
-}
-
-.card-servicio:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-xl);
-}
-
-.card-servicio:focus-visible {
-  outline: 3px solid var(--light-blue);
-  outline-offset: 3px;
-}
-
-.card-imagen {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-}
-
-.cards-track:not(.native-track) .card-imagen {
-  aspect-ratio: auto;
-  flex: 1 1 55%;
-}
-
-.card-imagen img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-servicio:hover .card-imagen img {
-  transform: scale(1.06);
-}
-
-.card-imagen-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.45) 100%);
-  pointer-events: none;
-}
-
-.card-tag {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  display: inline-flex;
-  align-items: center;
-  padding: 0.4rem 0.9rem;
-  background: var(--card-color);
-  color: #fff;
-  border-radius: 50px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  box-shadow: 0 6px 20px -4px var(--card-color);
-}
-
-.card-cuerpo {
-  padding: 1.5rem 1.75rem 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  flex: 1;
-}
-
-.card-titulo {
-  font-family: var(--font-secondary);
-  font-weight: 700;
-  font-size: clamp(1.15rem, 1.8vw, 1.4rem);
-  color: var(--deep-blue);
-  letter-spacing: -0.01em;
-  margin: 0;
-}
-
-.card-descripcion {
-  font-size: 0.9rem;
-  color: #475569;
-  line-height: 1.55;
-  margin: 0;
-}
-
-.card-accion {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: auto;
-  padding-top: 0.9rem;
-  border-top: 1px solid rgba(15, 23, 42, 0.07);
-}
-
-.card-accion-texto {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--card-color);
-}
-
-.card-accion-icono {
-  color: var(--card-color);
-  transition: transform 0.3s ease;
-}
-
-.card-servicio:hover .card-accion-icono {
-  transform: translateX(4px);
-}
-
-@media (max-width: 768px) {
-  .carrusel-sticky {
-    position: relative;
-    height: auto;
-    padding: 4rem 0;
-  }
-
-  .carrusel-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .card-servicio {
-    width: 85vw;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .card-servicio,
-  .card-imagen img,
-  .card-accion-icono,
-  .hint-arrow {
-    transition: none;
-    animation: none;
-  }
-}
-</style> -->
